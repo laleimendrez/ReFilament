@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
 <h2>Data Samples</h2>
-<p>Display scanned data or classification history.</p>
+
+<div class="panel">
+  <h3>Scanned Data</h3>
+  <p>History of classified plastic types or test results.</p>
+</div>
+
+<div class="panel">
+  <h3>Data Log</h3>
+  <p>Shows sensor results and timestamps here.</p>
+</div>
 {% endblock %}

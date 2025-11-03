@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Mixture Type</h2>
-<p>Show available plastic mixtures and composition ratios.</p>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mixture.css') }}">
+<h2>Material Blend</h2>
+
+<div class="panel">
+  <h3>Available Plastic Mixtures</h3>
+  <p>List of PET, HDPE, PP, and combined ratios.</p>
+</div>
+
+<div class="panel">
+  <h3>Composition Details</h3>
+  <p>Show selected blend properties and ratios here.</p>
+</div>
 {% endblock %}
