@@ -42,7 +42,7 @@
       <h3>Balanced Strength</h3>
       <p>General Purpose</p>
     </div>
-    <div class="mixture-ratio">80% PET <br> 20% HDPE</div>
+    <div class="mixture-ratio">80% PET<br>20% HDPE</div>
     <button class="select-btn">SELECT</button>
   </div>
 
@@ -52,7 +52,7 @@
       <h3>Recycle Hybrid</h3>
       <p>Multi-Property</p>
     </div>
-    <div class="mixture-ratio">50% PET <br> 50% PP</div>
+    <div class="mixture-ratio">50% PET<br>50% PP</div>
     <button class="select-btn">SELECT</button>
   </div>
 
@@ -62,7 +62,7 @@
       <h3>Structural Flex</h3>
       <p>Increased Flex</p>
     </div>
-    <div class="mixture-ratio">70% HDPE <br> 30% PP</div>
+    <div class="mixture-ratio">70% HDPE<br>30% PP</div>
     <button class="select-btn">SELECT</button>
   </div>
 
@@ -72,10 +72,108 @@
       <h3>Industrial Blend</h3>
       <p>High Durability</p>
     </div>
-    <div class="mixture-ratio">70% HDPE <br> 20% PP <br> 10% PET</div>
+    <div class="mixture-ratio">70% HDPE<br>20% PP<br>10% PET</div>
     <button class="select-btn">SELECT</button>
   </div>
 
 </div>
 
+<!-- MODALS -->
+<div class="mixture-modal" id="modal-1">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Clear Filament<br>Purpose: Standard Prototyping</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td> PET</td><td>100%</td><td>Transparent & Tough</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-2">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Flexible White<br>Purpose: Low-Stress Components</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td> HDPE</td><td>100%</td><td>Strong & Chemically Inert</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-3">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Chemical Resistant<br>Purpose: Functional Parts</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td> PP</td><td>100%</td><td>Heat Tolerant & Flexible (Hinge)</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-4">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Balanced Strength<br>Purpose: General Purpose</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td>PET</td><td>80%</td><td>Transparent & Tough</td></tr>
+      <tr><td>HDPE</td><td>20%</td><td>Strong & Chemically Inert</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-5">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Recycle Hybrid<br>Purpose: Multi-Property</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td>PET</td><td>50%</td><td>Transparent & Tough</td></tr>
+      <tr><td>PP</td><td>50%</td><td>Heat Tolerant & Flexible (Hinge)</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-6">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Structural Flex<br>Purpose: Increased Flex</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td>HDPE</td><td>70%</td><td>Strong & Chemically Inert</td></tr>
+      <tr><td>PP</td><td>30%</td><td>Heat Tolerant & Flexible (Hinge)</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-7">
+  <div class="modal-content">
+    <h3>MIXTURE BLEND DETAILS</h3>
+    <p>Filament: Industrial Blend<br>Purpose: High Durability</p>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage (%)</th><th>Properties</th></tr>
+      <tr><td>HDPE</td><td>70%</td><td>Strong & Chemically Inert</td></tr>
+      <tr><td>PP</td><td>20%</td><td>Heat Tolerant & Flexible (Hinge)</td></tr>
+      <tr><td>PET</td><td>10%</td><td>Transparent & Toughy</td></tr>
+    </table>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/mixture.js') }}"></script>
 {% endblock %}

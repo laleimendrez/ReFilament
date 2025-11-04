@@ -54,3 +54,48 @@
 .select-btn:hover {
   background: #4b5d75;
 }
+/* MODAL STYLES */
+.mixture-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: #152233;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.modal-content table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+}
+
+.modal-content th, .modal-content td {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 6px;
+  font-size: 0.9rem;
+}
+
+.ok-btn {
+  background: #00c46a;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
