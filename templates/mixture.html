@@ -1,15 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mixture.css') }}">
-<h2>Material Blend</h2>
 
-<div class="panel">
-  <h3>Available Plastic Mixtures</h3>
-  <p>List of PET, HDPE, PP, and combined ratios.</p>
+<h2 class="page-title">Material Blend</h2>
+
+<div class="mixture-grid">
+
+  <!-- Card 1 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Clear Filament</h3>
+      <p>Standard Prototyping</p>
+    </div>
+    <div class="mixture-ratio">100% PET</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Flexible White</h3>
+      <p>Low-Stress Components</p>
+    </div>
+    <div class="mixture-ratio">100% HDPE</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Chemical Resistant</h3>
+      <p>Functional Parts</p>
+    </div>
+    <div class="mixture-ratio">100% PP</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Balanced Strength</h3>
+      <p>General Purpose</p>
+    </div>
+    <div class="mixture-ratio">80% PET <br> 20% HDPE</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Recycle Hybrid</h3>
+      <p>Multi-Property</p>
+    </div>
+    <div class="mixture-ratio">50% PET <br> 50% PP</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Structural Flex</h3>
+      <p>Increased Flex</p>
+    </div>
+    <div class="mixture-ratio">70% HDPE <br> 30% PP</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 7 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Industrial Blend</h3>
+      <p>High Durability</p>
+    </div>
+    <div class="mixture-ratio">70% HDPE <br> 20% PP <br> 10% PET</div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
 </div>
 
-<div class="panel">
-  <h3>Composition Details</h3>
-  <p>Show selected blend properties and ratios here.</p>
-</div>
 {% endblock %}

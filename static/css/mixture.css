@@ -1,0 +1,56 @@
+.page-title {
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.mixture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.mixture-card {
+  background: #101b2b;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.mixture-info h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.mixture-info p {
+  color: #a9b4c6;
+  font-size: 0.85rem;
+  margin: 2px 0 0 0;
+}
+
+.mixture-ratio {
+  color: #65ff69;
+  font-size: 0.9rem;
+  text-align: right;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.select-btn {
+  background: #2f3a4a;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.select-btn:hover {
+  background: #4b5d75;
+}
