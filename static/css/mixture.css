@@ -54,6 +54,7 @@
 .select-btn:hover {
   background: #4b5d75;
 }
+
 /* MODAL STYLES */
 .mixture-modal {
   display: none;
@@ -66,6 +67,29 @@
   justify-content: center;
   align-items: center;
   z-index: 100;
+}
+
+.modal-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.mixture-details {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.mixture-details p {
+  margin: 2px 0;
+  color: #ABB0B9;
+  font-weight: 100;
+}
+
+.mixture-details strong {
+  color: #ABB0B9;
+  font-weight: 100;
 }
 
 .modal-content {
