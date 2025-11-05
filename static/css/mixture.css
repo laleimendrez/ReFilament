@@ -100,6 +100,8 @@
   width: 420px;
   text-align: center;
   box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .modal-content table {
@@ -110,16 +112,22 @@
 
 .modal-content th, .modal-content td {
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  padding: 6px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  padding: 4px 6px;
 }
 
 .ok-btn {
-  background: #00c46a;
+  background: #009f50;
   border: none;
   color: white;
   padding: 6px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
+  transition: 0.25s; 
 }
+
+.ok-btn:hover {
+  background: #00e37a;
+}
+
