@@ -1,15 +1,106 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
-<h2>Data Samples</h2>
+<script src="{{ url_for('static', filename='js/data.js') }}"></script>
 
-<div class="panel">
-  <h3>Scanned Data</h3>
-  <p>History of classified plastic types or test results.</p>
-</div>
+<div class="dashboard">
+  <h1 class="section-title">CLASSIFICATION SUMMARY</h1>
 
-<div class="panel">
-  <h3>Data Log</h3>
-  <p>Shows sensor results and timestamps here.</p>
+  <section class="summary">
+    <div class="card">
+      <h2>TOTAL RECORDS</h2>
+      <p class="number">{{ "{:,}".format(summary.total_records) }}</p>
+      <p class="label-unit">plastics</p>
+    </div>
+
+    <div class="card">
+      <h2>CLASSIFICATION BREAKDOWN</h2>
+      <div class="chart-container">
+        <div class="chart-text left">
+          <p class="percent pet">{{ summary.pet }}%</p>
+          <p class="label">PET</p>
+        </div>
+
+        <div class="donut-chart">
+          <svg viewBox="0 0 36 36" class="circular-chart">
+            <circle class="circle-bg" cx="18" cy="18" r="14" />
+
+            <circle class="circle pet" data-percent="{{ summary.pet }}" cx="18" cy="18" r="14" />
+
+            <circle class="circle hdpe" data-percent="{{ summary.hdpe }}" cx="18" cy="18" r="14" />
+
+            <circle class="circle pp" data-percent="{{ summary.pp }}" cx="18" cy="18" r="14" />
+
+          </svg>
+        </div>
+
+        <div class="chart-text right">
+          <p class="percent hdpe">{{ summary.hdpe }}%</p>
+          <p class="label">HDPE</p>
+          <p class="percent pp">{{ summary.pp }}%</p>
+          <p class="label">PP</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>24H ACTIVITY</h2>
+      <p class="activity">+{{ summary.activity_24h }} ⬆</p>
+    </div>
+
+    <div class="card">
+      <h2>AVERAGE CONFIDENCE</h2>
+      <p class="confidence">{{ summary.avg_confidence }}%</p>
+    </div>
+  </section>
+
+  <section class="table-section">
+    <h3>MATERIAL TRACEABILITY LOG</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Timestamp</th>
+          <th>Material</th>
+          <th>Confidence</th>
+          <th>Chemical Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in materials %}
+        <tr class="material-row {{ item.material | lower }}">
+          <td>{{ item.id }}</td>
+          <td>{{ item.timestamp }}</td>
+          <td class="material-cell">
+            <span class="material-tag {{ item.material | lower }}">
+              {{ item.material }}
+            </span>
+          </td>
+          <td class="confidence-bar-cell"> 
+            <div class="bar-and-text-container"> 
+              <span class="confidence-bar-wrapper">
+                <span class="confidence-bar {{ item.material | lower }}" 
+                  style="--conf: {{ item.confidence | replace('%', '') }}">
+                </span>
+              </span>
+              <span class="confidence-text">{{ item.confidence }}</span>
+            </div>
+          </td>
+          <td>
+            {% if item.material == 'PET' %}Polyethylene Terephthalate
+            {% elif item.material == 'HDPE' %}High-Density Polyethylene
+            {% elif item.material == 'PP' %}Polypropylene
+            {% else %}N/A
+            {% endif %}
+          </td>
+          <td>
+            <button class="view-spectrum" data-id="{{ item.id }}">View Spectrum</button>
+          </td> 
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
 </div>
 {% endblock %}
