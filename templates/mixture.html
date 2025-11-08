@@ -1,15 +1,200 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mixture.css') }}">
-<h2>Material Blend</h2>
 
-<div class="panel">
-  <h3>Available Plastic Mixtures</h3>
-  <p>List of PET, HDPE, PP, and combined ratios.</p>
+<h2 class="page-title">Material Blend</h2>
+
+<div class="mixture-grid">
+
+  <!-- Card 1 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Clear Filament</h3>
+      <p>Standard Prototyping</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Flexible White</h3>
+      <p>Low-Stress Components</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Chemical Resistant</h3>
+      <p>Functional Parts</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Balanced Strength</h3>
+      <p>General Purpose</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Recycle Hybrid</h3>
+      <p>Multi-Property</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 6 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Structural Flex</h3>
+      <p>Increased Flex</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
+  <!-- Card 7 -->
+  <div class="mixture-card">
+    <div class="mixture-info">
+      <h3>Industrial Blend</h3>
+      <p>High Durability</p>
+    </div>
+    <button class="select-btn">SELECT</button>
+  </div>
+
 </div>
 
-<div class="panel">
-  <h3>Composition Details</h3>
-  <p>Show selected blend properties and ratios here.</p>
+<!-- MODALS -->
+<div class="mixture-modal" id="modal-1">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Clear Filament</p>
+      <p><strong>Purpose:</strong> Standard Prototyping</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>PET</td><td>100%</td><td>1000g</td><td>Transparent & Tough</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
 </div>
+
+<div class="mixture-modal" id="modal-2">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Flexible White</p>
+      <p><strong>Purpose:</strong> Low-Stress Components</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>HDPE</td><td>100%</td><td>1000g</td><td>Strong & Chemically Inert</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-3">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Chemical Resistant</p>
+      <p><strong>Purpose:</strong> Functional Parts</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>PP</td><td>100%</td><td>1000g</td><td>Heat Tolerant & Flexible</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-4">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Balanced Strength</p>
+      <p><strong>Purpose:</strong> General Purpose</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>PET</td><td>80%</td><td>800g</td><td>Transparent & Tough</td></tr>
+      <tr><td>HDPE</td><td>20%</td><td>200g</td><td>Strong & Chemically Inert</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-5">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Recycle Hybrid</p>
+      <p><strong>Purpose:</strong> Multi-Property</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>PET</td><td>50%</td><td>500g</td><td>Transparent & Tough</td></tr>
+      <tr><td>PP</td><td>50%</td><td>500g</td><td>Heat Tolerant & Flexible</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-6">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Structural Flex</p>
+      <p><strong>Purpose:</strong> Increased Flex</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>HDPE</td><td>70%</td><td>700g</td><td>Strong & Chemically Inert</td></tr>
+      <tr><td>PP</td><td>30%</td><td>300g</td><td>Heat Tolerant & Flexible</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<div class="mixture-modal" id="modal-7">
+  <div class="modal-content">
+    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Industrial Blend</p>
+      <p><strong>Purpose:</strong> High Durability</p>
+    </div>
+    <hr>
+    <table>
+      <tr><th>Material</th><th>Percentage <span class="symbol">(%)</span></th><th>Mass <span class="symbol">(g)</span></th><th>Properties</th></tr>
+      <tr><td>HDPE</td><td>70%</td><td>700g</td><td>Strong & Chemically Inert</td></tr>
+      <tr><td>PP</td><td>20%</td><td>200g</td><td>Heat Tolerant & Flexible</td></tr>
+      <tr><td>PET</td><td>10%</td><td>100g</td><td>Transparent & Tough</td></tr>
+    </table>
+    <hr>
+    <button class="ok-btn">OK</button>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/mixture.js') }}"></script>
 {% endblock %}
