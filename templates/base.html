@@ -26,14 +26,18 @@
       Material Blend
     </a>
     <a href="{{ url_for('data_bp.data_page') }}" class="tab {% if request.path.startswith('/data') %}active{% endif %}">
-      Data History
+      Classification Log
     </a>
   </nav>
 
   <!-- MAIN CONTENT -->
-  <main class="dashboard-content">
-    {% block content %}{% endblock %}
-  </main>
+  <main class="
+    {% if not request.path.startswith('/data') %}
+      dashboard-content
+    {% endif %}
+  ">
+    {% block content %}{% endblock %}
+  </main>
 
 </body>
 </html>
