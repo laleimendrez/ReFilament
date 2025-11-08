@@ -56,51 +56,84 @@
 
   <section class="table-section">
     <h3>MATERIAL TRACEABILITY LOG</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Timestamp</th>
-          <th>Material</th>
-          <th>Confidence</th>
-          <th>Chemical Name</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in materials %}
-        <tr class="material-row {{ item.material | lower }}">
-          <td>{{ item.id }}</td>
-          <td>{{ item.timestamp }}</td>
-          <td class="material-cell">
-            <span class="material-tag {{ item.material | lower }}">
-              {{ item.material }}
-            </span>
-          </td>
-          <td class="confidence-bar-cell"> 
-            <div class="bar-and-text-container"> 
-              <span class="confidence-bar-wrapper">
-                <span class="confidence-bar {{ item.material | lower }}" 
-                  style="--conf: {{ item.confidence | replace('%', '') }}">
-                </span>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Timestamp</th>
+            <th>Material</th>
+            <th>Confidence</th>
+            <th>Chemical Name</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in materials %}
+          <tr class="material-row {{ item.material | lower }}">
+            <td>{{ item.id }}</td>
+            <td>{{ item.timestamp }}</td>
+            <td class="material-cell">
+              <span class="material-tag {{ item.material | lower }}">
+                {{ item.material }}
               </span>
-              <span class="confidence-text">{{ item.confidence }}</span>
-            </div>
-          </td>
-          <td>
-            {% if item.material == 'PET' %}Polyethylene Terephthalate
-            {% elif item.material == 'HDPE' %}High-Density Polyethylene
-            {% elif item.material == 'PP' %}Polypropylene
-            {% else %}N/A
-            {% endif %}
-          </td>
-          <td>
-            <button class="view-spectrum" data-id="{{ item.id }}">View Spectrum</button>
-          </td> 
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+            </td>
+            <td class="confidence-bar-cell"> 
+              <div class="bar-and-text-container"> 
+                <span class="confidence-bar-wrapper">
+                  <span class="confidence-bar {{ item.material | lower }}" 
+                    style="--conf: {{ item.confidence | replace('%', '') }}">
+                  </span>
+                </span>
+                <span class="confidence-text">{{ item.confidence }}</span>
+              </div>
+            </td>
+            <td>
+              {% if item.material == 'PET' %}Polyethylene Terephthalate
+              {% elif item.material == 'HDPE' %}High-Density Polyethylene
+              {% elif item.material == 'PP' %}Polypropylene
+              {% else %}N/A
+              {% endif %}
+            </td>
+            <td>
+              <button class="view-spectrum" data-id="{{ item.id }}">View Spectrum</button>
+            </td> 
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </section>
+</div>
+
+<div id="spectralAnalysisModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modal-title">SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id"></span></h2>
+
+        <div class="modal-data-bar">
+            <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
+            <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
+            <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
+            </div>
+
+        <div class="chart-area">
+            <canvas id="spectralChart"></canvas>
+            <div class="chart-legend">
+                <span class="legend-item"><span class="legend-color measured"></span> Measured Spectrum</span>
+                <span class="legend-item"><span class="legend-color reference"></span> Reference Profile</span>
+            </div>
+        </div>
+        
+        <div class="modal-notes">
+            <h4>ANALYSIS NOTES</h4>
+            <p id="modal-analysis-note">
+                Key spectral peaks were detected, showing a strong correlation with the [Material] reference profile. 
+                This high certainty confirms the material type.
+            </p>
+        </div>
+
+        <button class="modal-confirm-button">CONFIRM & CLOSE</button>
+    </div>
 </div>
 {% endblock %}
