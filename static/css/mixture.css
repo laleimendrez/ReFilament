@@ -1,53 +1,56 @@
 .page-title {
   color: #ffffff;
-  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .mixture-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  padding: 10px;
 }
 
 .mixture-card {
   background: #101b2b;
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 14px;
+  padding: 26px 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mixture-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 .mixture-info h3 {
-  color: white;
+  color: #00FFFF;
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .mixture-info p {
   color: #a9b4c6;
-  font-size: 0.85rem;
-  margin: 2px 0 0 0;
-}
-
-.mixture-ratio {
-  color: #65ff69;
-  font-size: 0.9rem;
-  text-align: right;
-  font-weight: 600;
-  margin-right: 8px;
+  font-size: 1rem;
+  margin-top: 4px;
 }
 
 .select-btn {
   background: #2f3a4a;
   border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  color: white;
-  font-size: 0.8rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #37FF00;
+  font-size: 0.95rem;
   cursor: pointer;
+  font-weight: 600;
   transition: 0.25s;
 }
 
@@ -55,7 +58,6 @@
   background: #4b5d75;
 }
 
-/* MODAL STYLES */
 .mixture-modal {
   display: none;
   position: fixed;
@@ -69,65 +71,108 @@
   z-index: 100;
 }
 
+.modal-content {
+  background: #152233;
+  color: white;
+  padding: 30px;
+  border-radius: 14px;
+  width: 540px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
 .modal-title {
   text-align: center;
   font-weight: 700;
-  margin-bottom: 8px;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
   color: #fff;
 }
 
 .mixture-details {
   text-align: left;
-  margin-bottom: 10px;
+  margin: 15px 0 25px;
 }
 
 .mixture-details p {
-  margin: 2px 0;
+  margin: 4px 0;
   color: #ABB0B9;
-  font-weight: 100;
+  font-size: 1rem;
 }
 
-.mixture-details strong {
-  color: #ABB0B9;
-  font-weight: 100;
+.row-pet {
+  background-color: rgba(0, 191, 255, 0.1); 
 }
 
-.modal-content {
-  background: #152233;
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 420px;
-  text-align: center;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  font-size: 0.85rem;
-  line-height: 1.4;
+.row-hdpe {
+  background-color: rgba(0, 255, 0, 0.1); 
+}
+
+.row-pp {
+  background-color: rgba(255, 195, 0, 0.1); 
 }
 
 .modal-content table {
   width: 100%;
-  margin: 10px 0;
+  margin: 16px 0 20px;
   border-collapse: collapse;
 }
 
 .modal-content th, .modal-content td {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.8rem;
-  padding: 4px 6px;
+  text-align: center; 
+  border-bottom: 1px solid rgba(255,255,255,0.1); 
+  font-size: 0.95rem;
+  padding: 12px 8px; 
+}
+
+.modal-content th {
+  background-color: #101b2b; 
+  color: #a9b4c6; 
+  font-weight: 400; 
+  border-bottom: 1px solid rgba(255,255,255,0.3); 
+}
+
+.material-pet {
+  background-color: #00BFFF;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.material-hdpe {
+  background-color: #00FF00;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.material-pp {
+  background-color:#FFC300;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
 }
 
 .ok-btn {
   background: #009f50;
   border: none;
   color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
+  padding: 10px 24px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.25s; 
+  font-size: 0.95rem;
+  transition: 0.25s;
 }
 
 .ok-btn:hover {
   background: #00e37a;
 }
-
