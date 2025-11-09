@@ -23,6 +23,8 @@
   position: relative;
   border: 1px solid rgba(255,255,255,0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-wrap: wrap;
+  word-wrap: break-word;
 }
 
 .mixture-card:hover {
@@ -69,6 +71,7 @@
   justify-content: center;
   align-items: center;
   z-index: 100;
+  padding: 20px;
 }
 
 .modal-content {
@@ -76,11 +79,13 @@
   color: white;
   padding: 30px;
   border-radius: 14px;
-  width: 540px;
+  width: 90%;
+  max-width: 540px;
   text-align: center;
   box-shadow: 0 0 25px rgba(0,0,0,0.4);
   font-size: 1rem;
   line-height: 1.6;
+  box-sizing: border-box;
 }
 
 .modal-title {
@@ -175,4 +180,129 @@
 
 .ok-btn:hover {
   background: #00e37a;
+}
+/* Tablet view (max-width: 992px) */
+@media (max-width: 992px) {
+  .mixture-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .modal-content {
+    width: 75%;
+    max-width: 420px;
+    padding: 24px;
+    font-size: 0.95rem;
+    max-height: 90vh;          /* ensure modal height fits viewport */
+    overflow-y: auto;          /* scroll if content too tall */
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Mobile view (max-width: 600px) */
+@media (max-width: 600px) {
+  .mixture-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mixture-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .select-btn {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+
+  .modal-content {
+    width: 85%;
+    max-width: 350px;
+    padding: 20px;
+    font-size: 0.9rem;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .ok-btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Very small screens (max-width: 400px) */
+@media (max-width: 400px) {
+  .modal-content {
+    width: 90%;
+    max-width: 300px;
+    padding: 16px;
+  }
+
+  .mixture-card {
+    padding: 16px;
+  }
+
+  .mixture-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .mixture-info p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Very very small screens (max-width: 320px) */
+@media (max-width: 320px) {
+  .mixture-modal {
+    width: 95%;
+    max-width: 280px;
+    max-height: 90vh;        /* prevent modal from exceeding screen height */
+    margin: 5vh auto;        /* center vertically */
+    overflow-y: auto;        /* scroll if content taller than viewport */
+  }
+
+  .modal-content {
+    padding: 10px;           /* tighter padding */
+    font-size: 0.85rem;      /* slightly smaller text */
+    overflow-x: hidden;      
+    word-wrap: break-word;   /
+  }
+
+  .modal-title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .modal-body {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .ok-btn {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+
+  .modal-content table {
+    font-size: 0.8rem;
+    width: 100%;
+    table-layout: fixed;     /* prevent horizontal overflow */
+  }
+
+  .modal-content th,
+  .modal-content td {
+    padding: 5px 3px;        /* smaller cell padding */
+    word-wrap: break-word;   /* break long text */
+  }
+
+  .modal-content button {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
 }
