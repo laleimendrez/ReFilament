@@ -1,11 +1,21 @@
-from flask_mysqldb import MySQL
+import pymysql
+from flask import Flask, g
 
-def init_mysql(app):
-    app.config['MYSQL_HOST'] = 'localhost'
-    app.config['MYSQL_USER'] = 'root'
-    app.config['MYSQL_PASSWORD'] = 'lalei'
-    app.config['MYSQL_DB'] = 'refilament_db'
-    app.config['MYSQL_CURSORCLASS'] = 'DictCursor' 
-    
-    mysql = MySQL(app)
-    return mysql
+def get_db():
+    if 'db' not in g:
+        g.db = pymysql.connect(
+            host='localhost',
+            user='root',
+            password='lalei',
+            database='refilament_db',
+            cursorclass=pymysql.cursors.DictCursor
+        )
+    return g.db
+
+def close_db(e=None):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+def init_mysql(app: Flask):
+    app.teardown_appcontext(close_db)
