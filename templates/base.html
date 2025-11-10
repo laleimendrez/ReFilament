@@ -20,14 +20,14 @@
 
   <!-- NAVIGATION -->
   <nav class="tab-nav">
-    <a href="{{ url_for('temp_bp.temp_page') }}" class="tab {% if request.path.startswith('/temperature') %}active{% endif %}">
-      Temperature Monitoring
+    <a href="{{ url_for('data_bp.data_page') }}" class="tab {% if request.path.startswith('/data') %}active{% endif %}">
+      Classification Log
     </a>
     <a href="{{ url_for('mixture_bp.mixture_page') }}" class="tab {% if request.path.startswith('/mixture') %}active{% endif %}">
       Material Blend
     </a>
-    <a href="{{ url_for('data_bp.data_page') }}" class="tab {% if request.path.startswith('/data') %}active{% endif %}">
-      Classification Log
+    <a href="{{ url_for('temp_bp.temp_page') }}" class="tab {% if request.path.startswith('/temperature') %}active{% endif %}">
+      Temperature Monitoring
     </a>
   </nav>
 
