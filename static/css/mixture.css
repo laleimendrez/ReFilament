@@ -1,53 +1,91 @@
-.page-title {
-  color: #ffffff;
-  margin-bottom: 20px;
-}
 
 .mixture-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  padding: 10px;
 }
 
 .mixture-card {
   background: #101b2b;
-  border-radius: 10px;
-  padding: 18px;
+  border-radius: 14px;
+  padding: 26px 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  border: 1px solid rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-wrap: wrap;
+  word-wrap: break-word;
+}
+
+.mixture-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 .mixture-info h3 {
-  color: white;
+  color: #00FFFF;
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .mixture-info p {
   color: #a9b4c6;
-  font-size: 0.85rem;
-  margin: 2px 0 0 0;
+  font-size: 1rem;
+  margin-top: 4px;
 }
 
-.mixture-ratio {
-  color: #65ff69;
-  font-size: 0.9rem;
-  text-align: right;
+.mixture-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 12px;
+  color: #ffffff;
   font-weight: 600;
-  margin-right: 8px;
+  font-size: 1rem;
+  background-color: #1F2937;        /* dark card-like background */
+  padding: 10px 16px;               /* padding around the dropdown */
+  border-radius: 12px;              /* smoother rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* subtle shadow for depth */
+}
+
+.mixture-controls label {
+  color: #a9b4c6;                   /* bright accent for the label */
+}
+
+.mixture-controls select {
+  background: #2c3a50;              /* slightly lighter dark background */
+  border: 1px solid rgba(255,255,255,0.1); /* subtle border */
+  color: #a9b4c6;
+  padding: 8px 14px;                /* slightly bigger padding */
+  border-radius: 10px;              /* rounded corners for dropdown itself */
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.3s, transform 0.2s;
+  outline: none;                     /* remove default focus outline */
+}
+
+.mixture-controls select:hover {
+  background: #3b4a65;              /* hover effect with subtle lighter color */
+  transform: scale(1.02);            /* slight zoom for interactivity */
+}
+
+.mixture-controls select:focus {
+  border-color: #a9b4c6;             
 }
 
 .select-btn {
   background: #2f3a4a;
   border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  color: white;
-  font-size: 0.8rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #37FF00;
+  font-size: 0.95rem;
   cursor: pointer;
+  font-weight: 600;
   transition: 0.25s;
 }
 
@@ -55,7 +93,6 @@
   background: #4b5d75;
 }
 
-/* MODAL STYLES */
 .mixture-modal {
   display: none;
   position: fixed;
@@ -67,67 +104,303 @@
   justify-content: center;
   align-items: center;
   z-index: 100;
-}
-
-.modal-title {
-  text-align: center;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: #fff;
-}
-
-.mixture-details {
-  text-align: left;
-  margin-bottom: 10px;
-}
-
-.mixture-details p {
-  margin: 2px 0;
-  color: #ABB0B9;
-  font-weight: 100;
-}
-
-.mixture-details strong {
-  color: #ABB0B9;
-  font-weight: 100;
+  padding: 20px;
 }
 
 .modal-content {
   background: #152233;
   color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 420px;
+  padding: 30px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 540px;
   text-align: center;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  font-size: 0.85rem;
-  line-height: 1.4;
+  box-shadow: 0 0 25px rgba(0,0,0,0.4);
+  font-size: 1rem;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.modal-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.mixture-details {
+  text-align: left;
+  margin: 15px 0 25px;
+}
+
+.mixture-details p {
+  margin: 4px 0;
+  color: #ABB0B9;
+  font-size: 1rem;
+}
+
+.row-pet {
+  background-color: rgba(0, 191, 255, 0.1); 
+}
+
+.row-hdpe {
+  background-color: rgba(0, 255, 0, 0.1); 
+}
+
+.row-pp {
+  background-color: rgba(255, 195, 0, 0.1); 
 }
 
 .modal-content table {
   width: 100%;
-  margin: 10px 0;
+  margin: 16px 0 20px;
   border-collapse: collapse;
 }
 
 .modal-content th, .modal-content td {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.8rem;
-  padding: 4px 6px;
+  text-align: center; 
+  border-bottom: 1px solid rgba(255,255,255,0.1); 
+  font-size: 0.95rem;
+  padding: 12px 8px; 
+}
+
+.modal-content th {
+  background-color: #101b2b; 
+  color: #a9b4c6; 
+  font-weight: 400; 
+  border-bottom: 1px solid rgba(255,255,255,0.3); 
+}
+
+.material-pet {
+  background-color: #00BFFF;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.material-hdpe {
+  background-color: #00FF00;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
+}
+
+.material-pp {
+  background-color:#FFC300;
+  color: #000000;
+  border-radius: 4px;
+  padding: 4px 8px;
+  display: inline-block;
+  min-width: 50px;
 }
 
 .ok-btn {
   background: #009f50;
   border: none;
   color: white;
-  padding: 6px 14px;
-  border-radius: 6px;
+  padding: 10px 24px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: 0.25s; 
+  font-size: 0.95rem;
+  transition: 0.25s;
 }
 
 .ok-btn:hover {
   background: #00e37a;
 }
+/* Tablet view (max-width: 992px) */
+@media (max-width: 992px) {
+  .mixture-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
 
+  .modal-content {
+    width: 75%;
+    max-width: 420px;
+    padding: 24px;
+    font-size: 0.95rem;
+    max-height: 90vh;          /* ensure modal height fits viewport */
+    overflow-y: auto;          /* scroll if content too tall */
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+    .mixture-controls {
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+
+  .mixture-controls select {
+    min-width: 150px;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
+}
+
+/* Mobile view (max-width: 600px) */
+@media (max-width: 600px) {
+  .mixture-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mixture-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .mixture-controls {
+    flex-direction: column;       /* stack label + dropdown vertically */
+    align-items: flex-start;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .mixture-controls label {
+    font-size: 0.9rem;
+  }
+
+  .mixture-controls select {
+    width: 100%;                  /* take full width of container */
+    min-width: 0;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .select-btn {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+
+  .modal-content {
+    width: 85%;
+    max-width: 350px;
+    padding: 20px;
+    font-size: 0.9rem;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .ok-btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+
+}
+
+
+
+/* Very small screens (max-width: 400px) */
+@media (max-width: 400px) {
+  .modal-content {
+    width: 90%;
+    max-width: 300px;
+    padding: 16px;
+  }
+
+  .mixture-card {
+    padding: 16px;
+  }
+
+  .mixture-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .mixture-info p {
+    font-size: 0.9rem;
+  }
+
+    .mixture-controls {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .mixture-controls select {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Very very small screens (max-width: 320px) */
+@media (max-width: 320px) {
+
+  .mixture-controls {
+    flex-direction: column;       /* stack label and dropdown vertically */
+    align-items: stretch;          /* make dropdown full width */
+    gap: 6px;
+    padding: 6px 8px;             /* reduce padding for tiny screens */
+    font-size: 0.8rem;            /* smaller font size */
+    border-radius: 10px;          /* keep rounded corners */
+  }
+
+  .mixture-controls label {
+    font-size: 0.8rem;
+    white-space: normal;           /* allow wrapping if needed */
+    word-wrap: break-word;
+  }
+
+  .mixture-controls select {
+    width: 100%;                  /* full width of container */
+    min-width: 0;                 /* remove min width restriction */
+    font-size: 0.8rem;
+    padding: 6px 10px;            /* smaller padding */
+    border-radius: 8px;           /* slightly smaller rounding for dropdown */
+  }
+  .mixture-modal {
+    width: 95%;
+    max-width: 280px;
+    max-height: 90vh;        /* prevent modal from exceeding screen height */
+    margin: 5vh auto;        /* center vertically */
+    overflow-y: auto;        /* scroll if content taller than viewport */
+  }
+
+  .modal-content {
+    padding: 10px;           /* tighter padding */
+    font-size: 0.85rem;      /* slightly smaller text */
+    overflow-x: hidden;      
+    word-wrap: break-word;   /
+  }
+
+  .modal-title {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .modal-body {
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .ok-btn {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+
+  .modal-content table {
+    font-size: 0.8rem;
+    width: 100%;
+    table-layout: fixed;     /* prevent horizontal overflow */
+  }
+
+  .modal-content th,
+  .modal-content td {
+    padding: 5px 3px;        /* smaller cell padding */
+    word-wrap: break-word;   /* break long text */
+  }
+
+  .modal-content button {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+  }
+}
