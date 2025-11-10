@@ -1,0 +1,133 @@
+.page-title {
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.mixture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.mixture-card {
+  background: #101b2b;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.mixture-info h3 {
+  color: white;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.mixture-info p {
+  color: #a9b4c6;
+  font-size: 0.85rem;
+  margin: 2px 0 0 0;
+}
+
+.mixture-ratio {
+  color: #65ff69;
+  font-size: 0.9rem;
+  text-align: right;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.select-btn {
+  background: #2f3a4a;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.select-btn:hover {
+  background: #4b5d75;
+}
+
+/* MODAL STYLES */
+.mixture-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-title {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.mixture-details {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.mixture-details p {
+  margin: 2px 0;
+  color: #ABB0B9;
+  font-weight: 100;
+}
+
+.mixture-details strong {
+  color: #ABB0B9;
+  font-weight: 100;
+}
+
+.modal-content {
+  background: #152233;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 420px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.modal-content table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+}
+
+.modal-content th, .modal-content td {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.8rem;
+  padding: 4px 6px;
+}
+
+.ok-btn {
+  background: #009f50;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s; 
+}
+
+.ok-btn:hover {
+  background: #00e37a;
+}
+
