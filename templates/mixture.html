@@ -2,7 +2,21 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mixture.css') }}">
 
-<h2 class="page-title">Material Blend</h2>
+<div class="mixture-controls">
+  <label for="sort-filter">Sort / Filter:</label>
+  <select id="sort-filter">
+    <option value="default">-- Select Option --</option>
+    <option value="name-asc">Name: A → Z</option>
+    <option value="name-desc">Name: Z → A</option>
+    <option value="purpose-standard">Standard Prototyping</option>
+    <option value="purpose-lowstress">Low-Stress Components</option>
+    <option value="purpose-functional">Functional Parts</option>
+    <option value="purpose-general">General Purpose</option>
+    <option value="purpose-multi">Multi-Property</option>
+    <option value="purpose-flex">Increased Flex</option>
+    <option value="purpose-durable">High Durability</option>
+  </select>
+</div>
 
 <div class="mixture-grid">
 
