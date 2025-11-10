@@ -1,0 +1,183 @@
+/* Main layout container for the two panels */
+.temp-layout-container {
+  display: flex; /* Use flexbox for side-by-side layout */
+  gap: 20px; /* This is the space BETWEEN the panels */
+  padding: 15px 10px;
+  align-items: flex-start; /* ADDED: Ensures columns align to the top */
+}
+
+/* --- NEW: Left Column Wrapper --- */
+.temp-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* This spaces out the stacked panels */
+  flex-basis: 40%; /* This sets the width for the *entire* column */
+  width: 40%; /* Ensure exact width */
+}
+
+/* Make all panels in the left column take full width */
+.temp-left-column > .panel {
+  width: 100%;
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* General panel styling */
+.panel {
+  background-color: #2b3444; 
+  border-radius: 8px;
+  padding: 25px;
+  color: #FFFFFF;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+/* Panel headings */
+.panel h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0px 20px 10px 0; 
+  color: #ffffff;
+}
+
+/* --- MODIFIED: Left Container: Real-Time --- */
+.realtime-container {
+  width: 100%;
+  padding: 20px;
+}
+
+/* --- MODIFIED: Right Container: History --- */
+.history-container {
+  flex-basis: 60%; 
+  padding: 20px 20px;
+  height: auto; /* Allow container to wrap content */
+}
+
+/* ... Gauge Styling ... */
+.gauge-container {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  margin: 20px auto 0px auto; 
+  text-align: center;
+}
+.gauge-label {
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+.gauge-value {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+.gauge-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px; 
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 10px;
+}
+.gauge-min,
+.gauge-max {
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+.gauge-status {
+  font-size: 1.1rem;
+  color: #39ff14; /* Bright green */
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Last update text styling */
+.last-update {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  margin-top: 12px;
+  font-weight: 400; /* lighter weight */
+}
+
+/* --- 
+  START OF MODIFIED SECTION 
+--- */
+
+/* --- MODIFIED: Status and Target text --- */
+.status-details {
+  display: flex;
+  flex-direction: column; 
+  gap: 8px; 
+  padding: 12px 16px; /* Reduced padding */
+  height: auto;
+  min-height: 0; /* Ensure no minimum height */
+}
+
+.status-details p {
+  margin: 0; 
+  padding: 0;
+  line-height: 1.2; /* Tighter line height */
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #FFFFFF; /* Set base text color */
+}
+
+.status-details .status-preheating {
+  color: #39ff14; /* Bright green */
+  font-weight: 700;
+  /* REMOVED: display: inline; */ /* (it's the default) */
+  margin-left: 8px; /* MODIFIED: slightly larger margin */
+}
+
+.status-details .target-temp {
+  /* MODIFIED: Color is green in the image, not orange */
+  color: #39ff14; 
+  font-weight: 700;
+  /* REMOVED: display: inline; */ /* (it's the default) */
+  margin-left: 8px; /* MODIFIED: slightly larger margin */
+}
+
+/* --- 
+  END OF MODIFIED SECTION 
+--- */
+
+
+/* --- MODIFIED: Last Warning text --- */
+.last-warning {
+  text-align: left;
+  padding: 20px 25px; /* MODIFIED: Match status-details padding */
+  height: auto; 
+  min-height: 0;
+}
+.last-warning p {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: #FFFFFF;
+  display: inline-block;
+  font-weight: 500;
+}
+.last-warning span {
+  font-size: 1rem;
+  color: #ffc107; /* Amber/Warning color */
+  font-weight: 700;
+  display: block;
+}
+
+
+/* --- Right Panel Chart (no changes needed) --- */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 440px; 
+  margin-top: 10px;
+  overflow: hidden; 
+}

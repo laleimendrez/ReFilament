@@ -1,15 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/temp.css') }}">
-<h2>Temperature Monitoring</h2>
 
-<div class="panel">
-  <h3>Live Temperature Reading</h3>
-  <p>Real-time data or graph placeholder here.</p>
-</div>
+<div class="temp-layout-container">
 
-<div class="panel">
-  <h3>Temperature History</h3>
-  <p>Past readings or sample logs will appear here.</p>
-</div>
+  <div class="temp-left-column">
+
+    <div class="realtime-container panel">
+      <h3>Real-Time Temperature</h3>
+      
+      <div class="gauge-container">
+        <canvas id="tempGauge"></canvas>
+        <div class="gauge-label">
+          <div class="gauge-value">50°C</div>
+        </div>
+      </div>
+      
+      <div class="gauge-info">
+        <span class="gauge-min">-40°C</span>
+        <span class="gauge-status">Stable</span>
+        <span class="gauge-max">80°C</span>
+      </div>
+      
+      <div class="last-update">Last Update: 10:10 AM</div>
+      
+    </div>
+
+    <div class="status-details panel">
+      <p>Status: <span class="status-preheating">Preheating</span></p>
+      <p>Target: <span class="target-temp">180°C</span></p>
+    </div>
+
+    <div class="last-warning panel">
+      <p>Last Warning:</p>
+      <span>Over-temp warning (10:10 AM)</span>
+    </div>
+
+  </div> 
+  <div class="history-container panel">
+    <h3>Temperature History (Last 30 Minutes)</h3>
+    <div class="chart-container">
+      <canvas id="tempHistoryChart"></canvas>
+    </div>
+  </div>
+
+</div> 
+<script src="{{ url_for('static', filename='js/temp.js') }}"></script>
 {% endblock %}

@@ -21,7 +21,7 @@ const mixtureCards = Array.from(document.querySelectorAll(".mixture-card"));
 selectDropdown.addEventListener("change", function () {
   const value = this.value;
 
-  mixtureCards.forEach(card => card.style.display = "flex"); 
+  mixtureCards.forEach(card => card.style.display = "flex"); // reset all cards
 
   if (value === "default") {
     mixtureCards.forEach(card => card.style.display = "flex");
@@ -48,3 +48,4 @@ selectDropdown.addEventListener("change", function () {
     });
   }
 });
+

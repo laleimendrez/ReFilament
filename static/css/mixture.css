@@ -1,3 +1,4 @@
+
 .mixture-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
@@ -44,36 +45,36 @@
   color: #ffffff;
   font-weight: 600;
   font-size: 1rem;
-  background-color: #1F2937;
-  padding: 10px 16px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #1F2937;        /* dark card-like background */
+  padding: 10px 16px;               /* padding around the dropdown */
+  border-radius: 12px;              /* smoother rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* subtle shadow for depth */
 }
 
 .mixture-controls label {
-  color: #a9b4c6;
+  color: #a9b4c6;                   /* bright accent for the label */
 }
 
 .mixture-controls select {
-  background: #2c3a50;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: #2c3a50;              /* slightly lighter dark background */
+  border: 1px solid rgba(255,255,255,0.1); /* subtle border */
   color: #a9b4c6;
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 8px 14px;                /* slightly bigger padding */
+  border-radius: 10px;              /* rounded corners for dropdown itself */
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
   transition: background 0.3s, transform 0.2s;
-  outline: none;
+  outline: none;                     /* remove default focus outline */
 }
 
 .mixture-controls select:hover {
-  background: #3b4a65;
-  transform: scale(1.02);
+  background: #3b4a65;              /* hover effect with subtle lighter color */
+  transform: scale(1.02);            /* slight zoom for interactivity */
 }
 
 .mixture-controls select:focus {
-  border-color: #a9b4c6;
+  border-color: #a9b4c6;             
 }
 
 .select-btn {
@@ -213,7 +214,7 @@
 .ok-btn:hover {
   background: #00e37a;
 }
-
+/* Tablet view (max-width: 992px) */
 @media (max-width: 992px) {
   .mixture-grid {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -224,15 +225,14 @@
     max-width: 420px;
     padding: 24px;
     font-size: 0.95rem;
-    max-height: 90vh;
-    overflow-y: auto;
+    max-height: 90vh;          /* ensure modal height fits viewport */
+    overflow-y: auto;          /* scroll if content too tall */
   }
 
   .modal-title {
     font-size: 1.3rem;
   }
-
-  .mixture-controls {
+    .mixture-controls {
     gap: 10px;
     padding: 8px 12px;
     font-size: 0.95rem;
@@ -245,6 +245,7 @@
   }
 }
 
+/* Mobile view (max-width: 600px) */
 @media (max-width: 600px) {
   .mixture-grid {
     grid-template-columns: 1fr;
@@ -258,7 +259,7 @@
   }
 
   .mixture-controls {
-    flex-direction: column;
+    flex-direction: column;       /* stack label + dropdown vertically */
     align-items: flex-start;
     padding: 10px 12px;
     gap: 8px;
@@ -269,7 +270,7 @@
   }
 
   .mixture-controls select {
-    width: 100%;
+    width: 100%;                  /* take full width of container */
     min-width: 0;
     font-size: 0.9rem;
     padding: 8px 12px;
@@ -295,8 +296,12 @@
     padding: 8px 20px;
     font-size: 0.9rem;
   }
+
 }
 
+
+
+/* Very small screens (max-width: 400px) */
 @media (max-width: 400px) {
   .modal-content {
     width: 90%;
@@ -316,7 +321,7 @@
     font-size: 0.9rem;
   }
 
-  .mixture-controls {
+    .mixture-controls {
     padding: 8px 10px;
     font-size: 0.85rem;
   }
@@ -327,43 +332,44 @@
   }
 }
 
+/* Very very small screens (max-width: 320px) */
 @media (max-width: 320px) {
+
   .mixture-controls {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column;       /* stack label and dropdown vertically */
+    align-items: stretch;          /* make dropdown full width */
     gap: 6px;
-    padding: 6px 8px;
-    font-size: 0.8rem;
-    border-radius: 10px;
+    padding: 6px 8px;             /* reduce padding for tiny screens */
+    font-size: 0.8rem;            /* smaller font size */
+    border-radius: 10px;          /* keep rounded corners */
   }
 
   .mixture-controls label {
     font-size: 0.8rem;
-    white-space: normal;
+    white-space: normal;           /* allow wrapping if needed */
     word-wrap: break-word;
   }
 
   .mixture-controls select {
-    width: 100%;
-    min-width: 0;
+    width: 100%;                  /* full width of container */
+    min-width: 0;                 /* remove min width restriction */
     font-size: 0.8rem;
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 6px 10px;            /* smaller padding */
+    border-radius: 8px;           /* slightly smaller rounding for dropdown */
   }
-
   .mixture-modal {
     width: 95%;
     max-width: 280px;
-    max-height: 90vh;
-    margin: 5vh auto;
-    overflow-y: auto;
+    max-height: 90vh;        /* prevent modal from exceeding screen height */
+    margin: 5vh auto;        /* center vertically */
+    overflow-y: auto;        /* scroll if content taller than viewport */
   }
 
   .modal-content {
-    padding: 10px;
-    font-size: 0.85rem;
-    overflow-x: hidden;
-    word-wrap: break-word;
+    padding: 10px;           /* tighter padding */
+    font-size: 0.85rem;      /* slightly smaller text */
+    overflow-x: hidden;      
+    word-wrap: break-word;   /
   }
 
   .modal-title {
@@ -384,13 +390,13 @@
   .modal-content table {
     font-size: 0.8rem;
     width: 100%;
-    table-layout: fixed;
+    table-layout: fixed;     /* prevent horizontal overflow */
   }
 
   .modal-content th,
   .modal-content td {
-    padding: 5px 3px;
-    word-wrap: break-word;
+    padding: 5px 3px;        /* smaller cell padding */
+    word-wrap: break-word;   /* break long text */
   }
 
   .modal-content button {
