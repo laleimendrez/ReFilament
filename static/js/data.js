@@ -109,6 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmButton = document.querySelector('.modal-confirm-button');
     const spectrumButtons = document.querySelectorAll('.view-spectrum');
     
+    const closeModal = () => {
+        modal.style.display = "none";
+        document.body.classList.remove('modal-open'); // <-- FIX: Remove class to restore scroll
+    };
 
     // Function to open the modal and populate data
     const openModal = (dataId) => {
@@ -151,17 +155,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Event listeners for closing the modal
-    closeButton.onclick = function() {
-        modal.style.display = "none";
-    }
-    confirmButton.onclick = function() {
-        modal.style.display = "none";
-    }
+    closeButton.onclick = closeModal;
+    confirmButton.onclick = closeModal;
 
     // Close the modal if user clicks outside of it
     window.onclick = function(event) {
         if (event.target == modal) {
-            modal.style.display = "none";
+            closeModal();
         }
     }
 });
