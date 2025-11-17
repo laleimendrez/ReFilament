@@ -18,10 +18,21 @@ body {
   margin: 20px;
 }
 
-.dashboard-title {
-  font-size: 1.2rem;
+.dashboard-logo-title span {
+  font-size: 1.75rem;
   font-weight: 600;
   color: #f1f5f9;
+}
+
+.dashboard-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  height: 60px; 
+  width: auto;
 }
 
 .system-status {
@@ -55,6 +66,7 @@ body {
   padding: 15px 0;
   text-decoration: none;
   color: #94a3b8;
+  font-size: 1.1rem;
   font-weight: 500;
   border-bottom: 2px solid transparent;
   transition: all 0.3s ease;
@@ -67,7 +79,9 @@ body {
 
 .tab.active {
   color: #38bdf8;
-  border-bottom: 2px solid #38bdf8;
+  border-bottom: 4px solid #38bdf8;
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 
 /* MAIN CONTENT AREA */
