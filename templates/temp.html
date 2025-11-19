@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/temp.css') }}">
 
@@ -7,36 +8,36 @@
   <div class="temp-left-column">
 
     <div class="realtime-container panel">
-      <h3>Real-Time Temperature</h3>
+      <h3>System Ambient Temperature</h3>
       
       <div class="gauge-container">
         <canvas id="tempGauge"></canvas>
         <div class="gauge-label">
-          <div class="gauge-value">50°C</div>
+          <div class="gauge-value">--°C</div>
         </div>
       </div>
       
       <div class="gauge-info">
         <span class="gauge-min">-40°C</span>
-        <span class="gauge-status">Stable</span>
+        <span class="gauge-status">Initializing...</span>
         <span class="gauge-max">80°C</span>
       </div>
       
-      <div class="last-update">Last Update: 10:10 AM</div>
-      
+      <div class="last-update">Last Update: --:--</div>
     </div>
 
     <div class="status-details panel">
-      <p>Status: <span class="status-preheating">Preheating</span></p>
-      <p>Target: <span class="target-temp">180°C</span></p>
+      <p>Status: <span class="status-preheating">Active</span></p>
+      <p>Target: <span class="target-temp">80°C</span></p>
     </div>
 
     <div class="last-warning panel">
       <p>Last Warning:</p>
-      <span>Over-temp warning (10:10 AM)</span>
+      <span>None</span>
     </div>
 
   </div> 
+
   <div class="history-container panel">
     <h3>Temperature History (Last 30 Minutes)</h3>
     <div class="chart-container">
@@ -45,5 +46,50 @@
   </div>
 
 </div> 
+
+<div id="warningModal" class="modal-overlay">
+  <div class="modal-content" style="border-color: #FFD700;">
+    <div class="modal-header">
+      <span class="warning-icon" style="color: #FFD700;">⚠️</span>
+      <h2 style="color: #FFD700;">HIGH TEMPERATURE WARNING</h2>
+    </div>
+    <div class="modal-body">
+      <div class="temp-readout">
+        <p>Current Temp: <span id="warnActualTemp" style="color: #FFD700;">0°C</span></p>
+        <p class="sub-temp">Target Temperature: <span style="color: #FFD700;">70°C</span></p>
+      </div>
+      <p class="modal-message">
+        The system is approaching the maximum safe limit.<br>
+      </p>
+      <p class="modal-timestamp">Time: <span id="warnTime">--:--</span></p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeWarningModal()" class="close-btn">ACKNOWLEDGE</button>
+    </div>
+  </div>
+</div>
+
+<div id="criticalModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>CRITICAL OVERHEATING ALERT</h2>
+    </div>
+    <div class="modal-body">
+      <div class="temp-readout">
+        <p>Actual Temperature: <span id="modalActualTemp" class="danger-text">0°C</span></p>
+        <p class="sub-temp">Target Temperature: <span class="danger-text">80°C</span></p>
+      </div>
+      <p class="modal-message">
+        Temperature has exceeded the maximum safe operating limit.<br>
+        Immediate inspection and corrective action are required to prevent damage.
+      </p>
+      <p class="modal-timestamp">Detected At: <span id="modalTime">--:--</span></p>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeModal()" class="close-btn">CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <script src="{{ url_for('static', filename='js/temp.js') }}"></script>
 {% endblock %}
