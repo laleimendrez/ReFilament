@@ -1,40 +1,38 @@
-// --- Mock Data for Spectral Graph (AS7265X Channels) ---
-// In a real application, this data would be fetched from the backend (MySQL)
-const mockSpectralData = {
-    'PET': {
-        // Mock data points for the 6 visible channels (450nm - 670nm) and beyond
-        measured: [2.5, 3.8, 1.5, 4.2, 1.8, 2.0, 1.2, 0.9, 0.8, 0.7],
-        reference: [2.8, 3.5, 1.2, 4.0, 2.0, 2.2, 1.5, 1.0, 0.7, 0.6],
-        note: "Strong correlation with PET reference profile. Distinct peaks align perfectly, confirming a high certainty.",
-        color: '#00BFFF'
-    },
-    'HDPE': {
-        measured: [3.5, 2.8, 4.5, 1.2, 0.5, 0.3, 0.4, 0.9, 1.1, 1.3],
-        reference: [3.8, 2.5, 4.2, 1.5, 0.7, 0.5, 0.3, 0.8, 1.0, 1.2],
-        note: "Clear absorption profile characteristic of HDPE. Certainty is high due to unique peak at 500-550nm.",
-        color: '#39FF14'
-    },
-    'PP': {
-        measured: [1.1, 1.5, 1.8, 2.2, 2.5, 3.0, 4.0, 3.5, 2.0, 1.0],
-        reference: [1.3, 1.7, 2.0, 2.5, 2.8, 3.2, 3.8, 3.2, 1.8, 0.8],
-        note: "Spectral signature consistent with Polypropylene. Slightly lower certainty suggests minor additives may be present.",
-        color: '#FFD700'
-    }
-};
-
 let spectralChartInstance = null; // To hold the Chart.js instance
 
-const setupSpectralChart = (materialType) => {
+// Define the 12 spectral channels (6 VIS, 6 NIR) from the AS7265X sensor
+const AS7265X_LABELS = [
+    // VIS (AS72651)
+    '450 nm', '500 nm', '550 nm', '570 nm', '600 nm', '650 nm',
+    // NIR1 (AS72652)
+    '680 nm', '730 nm', '760 nm', '810 nm', '860 nm', '900 nm',
+    // NIR2 (AS72653)
+    '940 nm', '1000 nm', '1050 nm', '1100 nm', '1150 nm', '1200 nm'
+];
+
+
+// Define the colors for the chart lines based on material type
+const MATERIAL_COLORS = {
+    'PET': '#00BFFF',
+    'HDPE': '#39FF14',
+    'PP': '#FFD700'
+};
+
+const REFERENCE_COLOR = '#94a3b8'; // Gray for the reference line
+
+// REVISED setupSpectralChart function
+const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
     // Destroy previous chart instance if it exists
     if (spectralChartInstance) {
         spectralChartInstance.destroy();
     }
     
-    const data = mockSpectralData[materialType];
     const ctx = document.getElementById('spectralChart').getContext('2d');
     
-    // X-axis labels representing the general wavelength range
-    const labels = ['400nm', '450nm', '500nm', '550nm', '600nm', '650nm', '700nm', '800nm', '900nm', '950nm'];
+    // Combine VIS and NIR data for a continuous spectrum graph
+    const measuredData = [...rawVis, ...rawNir];
+    const referenceData = [...refVis, ...refNir];
+    const labels = AS7265X_LABELS; // Use the 12 spectral channel labels
 
     // Initialize the Chart.js instance (requires Chart.js library to be included in base.html)
     spectralChartInstance = new Chart(ctx, {
@@ -43,8 +41,9 @@ const setupSpectralChart = (materialType) => {
             labels: labels,
             datasets: [{
                 label: 'Measured Spectrum',
-                data: data.measured,
-                borderColor: data.color, // Color coded based on material
+                data: measuredData,
+                // Use MATERIAL_COLORS dictionary to set the color
+                borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF', 
                 backgroundColor: 'transparent',
                 borderWidth: 3,
                 tension: 0.4,
@@ -52,8 +51,8 @@ const setupSpectralChart = (materialType) => {
             },
             {
                 label: 'Reference Profile',
-                data: data.reference,
-                borderColor: '#94a3b8', // Gray for reference
+                data: referenceData,
+                borderColor: REFERENCE_COLOR, // Fixed gray reference color
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 borderDash: [5, 5],
@@ -70,7 +69,8 @@ const setupSpectralChart = (materialType) => {
             },
             scales: {
                 x: {
-                    title: { display: true, text: 'WAVELENGTH (nm)', color: '#94a3b8' },
+                    // Update label to reflect the actual channels
+                    title: { display: true, text: 'WAVELENGTH (AS7265X Channels)', color: '#94a3b8' },
                     grid: { color: 'rgba(51, 65, 85, 0.5)' },
                     ticks: { color: '#E2E8F0' }
                 },
@@ -79,7 +79,8 @@ const setupSpectralChart = (materialType) => {
                     grid: { color: 'rgba(51, 65, 85, 0.5)' },
                     ticks: { color: '#E2E8F0' }
                 }
-            }
+            },
+
         }
     });
 };
@@ -115,35 +116,62 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Function to open the modal and populate data
-    const openModal = (dataId) => {
-        // Find the row data corresponding to the button clicked (using Jinja data here)
-        // NOTE: In a production app, you would fetch this specific data from the Flask API (MySQL)
+    // REVISED openModal function (needs to be defined as async)
+    const openModal = async (dataId) => {
+        const modal = document.getElementById('spectralAnalysisModal');
+        
+        // 1. Get the data from the table row (for display in modal header)
         const row = document.querySelector(`button[data-id="${dataId}"]`).closest('tr');
         if (!row) return;
 
         const materialType = row.querySelector('.material-tag').textContent.trim();
         const confidence = row.querySelector('.confidence-text').textContent.trim();
         const timestamp = row.querySelector('td:nth-child(2)').textContent.trim();
-        // const temp = row.querySelector('td:nth-child(5)').textContent.trim(); // Temp removed
+        
+        // Use a generic analysis note, since the specific note logic was tied to mock data
+        const modalNote = `Key spectral peaks were detected, showing a strong correlation with the ${materialType} reference profile. This high certainty confirms the material type.`;
 
-        // Populate Modal Data Bar
+        // 2. FETCH SPECTRA DATA FROM API (The crucial integration step)
+        const response = await fetch(`/data/spectra/${dataId}`);
+        if (!response.ok) {
+            alert("Failed to fetch spectral data. Check Flask server and database connection.");
+            return;
+        }
+        const spectra = await response.json();
+        
+        // Check if the data structure is correct and contains the required arrays
+        if (!spectra.raw_vis || !spectra.ref_vis) {
+            alert("Invalid spectral data received from server.");
+            return;
+        }
+
+        // 3. Populate Modal Data Bar
         document.getElementById('modal-id').textContent = dataId;
         document.getElementById('modal-material').textContent = materialType;
         document.getElementById('modal-material').className = `material-tag ${materialType.toLowerCase()}`;
-        document.getElementById('modal-confidence').textContent = confidence.replace('%', '') + '%';
+        document.getElementById('modal-confidence').textContent = confidence;
         document.getElementById('modal-timestamp').textContent = timestamp;
-        // document.getElementById('modal-temp').textContent = temp; // Temp removed
-
-        // Populate Analysis Note
-        document.getElementById('modal-analysis-note').textContent = mockSpectralData[materialType].note.replace('[Material]', materialType);
         
-        // Setup the Chart
-        setupSpectralChart(materialType);
+        // 4. Populate Analysis Note
+        // The note is a generic string now, no more mockSpectralData lookup
+        document.getElementById('modal-analysis-note').textContent = modalNote;
         
-        // Display the modal
+        // 5. Setup the Chart using the FETCHED DATA (raw_vis, raw_nir, etc.)
+        setupSpectralChart(
+            materialType, 
+            spectra.raw_vis, 
+            spectra.raw_nir, 
+            spectra.ref_vis, 
+            spectra.ref_nir
+        );
+        
+        // 6. Display the modal
         modal.style.display = "block";
-
         document.body.classList.add('modal-open');
+
+        // Update legend color based on material type
+        const legendMeasured = document.querySelector(".legend-color.measured");
+        legendMeasured.style.backgroundColor = MATERIAL_COLORS[materialType] || "#FFFFFF";
     };
 
     // Event listeners for opening the modal

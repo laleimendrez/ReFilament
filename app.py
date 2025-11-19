@@ -7,8 +7,8 @@ from database.db_config import init_mysql
 app = Flask(__name__)
 
 # Initialize MySQL connection
-mysql = init_mysql(app)
-app.config['MYSQL_INSTANCE'] = mysql 
+from database.db_config import init_mysql
+init_mysql(app)
 
 # Register Blueprints
 app.register_blueprint(temp_bp, url_prefix='/temperature')

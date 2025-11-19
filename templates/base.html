@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ReFilament</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/REFILAMENT_LOGO.png') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 </head>
@@ -11,7 +12,11 @@
 
   <!-- HEADER -->
   <header class="dashboard-header">
-    <div class="dashboard-title">🧩 ReFilament Monitoring Dashboard</div>
+    <div class="dashboard-logo-title">
+      <img src="{{ url_for('static', filename='img/REFILAMENT_LOGO.png') }}" class="logo-img" alt="ReFilament Logo">
+      <span>ReFilament Analysis Interface</span>
+    </div>
+
     <div class="system-status">
       <span class="status-text">System Operational</span>
       <span class="status-light"></span>
@@ -33,14 +38,11 @@
 
   <!-- MAIN CONTENT -->
   <main class="
-    {% if not request.path.startswith('/data') %}
-      dashboard-content
-    {% endif %}
-  ">
-    {% block content %}{% endblock %}
-  </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    {% if not request.path.startswith('/data') %}
+      dashboard-content
+    {% endif %}
+  ">
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>

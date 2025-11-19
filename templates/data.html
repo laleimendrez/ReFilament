@@ -89,11 +89,7 @@
               </div>
             </td>
             <td>
-              {% if item.material == 'PET' %}Polyethylene Terephthalate
-              {% elif item.material == 'HDPE' %}High-Density Polyethylene
-              {% elif item.material == 'PP' %}Polypropylene
-              {% else %}N/A
-              {% endif %}
+              {{ item.chemical_name if item.chemical_name else 'N/A' }}
             </td>
             <td>
               <button class="view-spectrum" data-id="{{ item.id }}">View Spectrum</button>
