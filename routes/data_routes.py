@@ -200,4 +200,28 @@ def get_spectra(log_id):
     finally:
         cursor.close()
 
+@data_bp.route('/api/logs')
+def api_logs():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    try:
+        materials = get_db_material_log(cursor)
+        return jsonify(materials)
+    except Exception as e:
+        print("Error fetching logs:", e)
+        return jsonify([])
+    finally:
+        cursor.close()
+
+@data_bp.route('/summary', methods=['GET'])
+def get_summary_api():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    try:
+        summary = get_db_summary_data(cursor)
+        return jsonify(summary)
+    finally:
+        cursor.close()
 

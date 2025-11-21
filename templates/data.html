@@ -68,7 +68,7 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="materials-table-body">
           {% for item in materials %}
           <tr class="material-row {{ item.material | lower }}">
             <td>{{ item.id }}</td>
