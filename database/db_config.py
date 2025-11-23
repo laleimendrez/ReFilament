@@ -14,7 +14,7 @@ def get_db():
                 user=os.getenv("DB_USER"),
                 password=os.getenv("DB_PASS"),
                 database=os.getenv("DB_NAME"),
-                port=os.getenv("DB_PORT", 3306), # <--- CRUCIAL CHANGE HERE
+                port=os.getenv("DB_PORT", 3306), 
                 autocommit=True
             )
         except mysql.connector.Error as err:

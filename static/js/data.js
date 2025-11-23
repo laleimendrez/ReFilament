@@ -192,4 +192,107 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal();
         }
     }
+
+    // ---- AUTO REFRESH TABLE EVERY 3 SECONDS ----
+    setInterval(async () => {
+
+        // 1. Fetch latest materials from the backend
+        const response = await fetch('/data/api/logs');
+        if (!response.ok) return;
+
+        const updatedLogs = await response.json();
+
+        // 2. Get the table body
+        const tbody = document.getElementById('materials-table-body');
+
+        // 3. Clear old table rows
+        tbody.innerHTML = "";
+
+        // 4. Insert updated rows
+        updatedLogs.forEach(item => {
+            const row = `
+            <tr class="material-row ${item.material.toLowerCase()}">
+                <td>${item.id}</td>
+                <td>${item.timestamp}</td>
+                <td class="material-cell">
+                    <span class="material-tag ${item.material.toLowerCase()}">${item.material}</span>
+                </td>
+                <td class="confidence-bar-cell">
+                    <div class="bar-and-text-container"> 
+                        <span class="confidence-bar-wrapper">
+                            <span class="confidence-bar ${item.material.toLowerCase()}"
+                                style="--conf: ${item.confidence.replace('%','')}">
+                            </span>
+                        </span>
+                        <span class="confidence-text">${item.confidence}</span>
+                    </div>
+                </td>
+                <td>${item.chemical_name || "N/A"}</td>
+                <td>
+                    <button class="view-spectrum" data-id="${item.id}">View Spectrum</button>
+                </td>
+            </tr>
+            `;
+
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // 5. RE-ATTACH the modal buttons
+        document.querySelectorAll('.view-spectrum').forEach(btn => {
+            btn.addEventListener('click', () => openModal(btn.dataset.id));
+        });
+
+    }, 3000);  // refresh every 3 seconds
+
+    async function refreshSummary() {
+        try {
+            const response = await fetch('/data/summary');
+            const summary = await response.json();
+
+            // Update TOTAL RECORDS
+            document.querySelector(".card:nth-child(1) .number").textContent =
+                summary.total_records.toLocaleString();
+
+            // Update PET, HDPE, PP text %
+            document.querySelector(".percent.pet").textContent = summary.pet + "%";
+            document.querySelector(".percent.hdpe").textContent = summary.hdpe + "%";
+            document.querySelector(".percent.pp").textContent = summary.pp + "%";
+
+            // Update DONUT CHART segments dynamically
+            const circles = {
+                pet: summary.pet,
+                hdpe: summary.hdpe,
+                pp: summary.pp
+            };
+
+            const radius = 14;
+            const circumference = 2 * Math.PI * radius;
+            let offset = 0;
+
+            for (const type of ["pet", "hdpe", "pp"]) {
+                const circle = document.querySelector(`.circle.${type}`);
+                if (circle) {
+                    const dash = (circles[type] / 100) * circumference;
+                    circle.style.strokeDasharray = `${dash} ${circumference}`;
+                    circle.style.strokeDashoffset = offset;
+                    offset -= dash;
+                }
+            }
+
+            // Update 24H activity
+            document.querySelector(".activity").textContent = "+" + summary.activity_24h + " ⬆";
+
+            // Update avg confidence
+            document.querySelector(".confidence").textContent = summary.avg_confidence + "%";
+
+        } catch (error) {
+            console.error("Summary refresh error:", error);
+        }
+    }
+
+    setInterval(() => {
+        refreshSummary();
+    }, 3000);
+
+
 });

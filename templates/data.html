@@ -4,7 +4,7 @@
 <script src="{{ url_for('static', filename='js/data.js') }}"></script>
 
 <div class="dashboard">
-  <h1 class="section-title">CLASSIFICATION SUMMARY</h1>
+  <h1 class="section-title">POLYMER CLASSIFICATION SUMMARY</h1>
 
   <section class="summary">
     <div class="card">
@@ -68,7 +68,7 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="materials-table-body">
           {% for item in materials %}
           <tr class="material-row {{ item.material | lower }}">
             <td>{{ item.id }}</td>
