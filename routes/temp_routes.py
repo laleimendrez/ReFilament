@@ -1,6 +1,7 @@
 # routes/temp_routes.py
 from flask import Blueprint, render_template, jsonify
 from database.db_config import get_db
+from flask import request
 
 temp_bp = Blueprint('temp_bp', __name__, template_folder='../templates')
 
@@ -43,4 +44,32 @@ def get_temperature_data():
     finally:
         cursor.close()
 
-# Note: The old mock '/api/temperature' route is replaced by '/data'.
+@temp_bp.route('/api/temperature', methods=['POST'])
+def receive_temperature():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    try:
+        data = request.get_json()
+
+        temperature = data.get("temperature")
+        status = data.get("status", "NORMAL")
+
+        if temperature is None:
+            return jsonify({"error": "Temperature is required"}), 400
+
+        insert_query = """
+        INSERT INTO temperature_log (system_dht_temp, status)
+        VALUES (%s, %s);
+        """
+
+        cursor.execute(insert_query, (temperature, status))
+
+        return jsonify({"status": "success"}), 201
+
+    except Exception as e:
+        print("Error inserting temperature:", e)
+        return jsonify({"error": "Server error"}), 500
+
+    finally:
+        cursor.close()

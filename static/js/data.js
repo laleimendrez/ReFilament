@@ -1,13 +1,14 @@
 let spectralChartInstance = null; // To hold the Chart.js instance
 
 // Define the 12 spectral channels (6 VIS, 6 NIR) from the AS7265X sensor
+// AS7265x spectral channels (410 nm UV to 940 nm IR, ~20 nm FWHM)
 const AS7265X_LABELS = [
-    // VIS (AS72651)
-    '450 nm', '500 nm', '550 nm', '570 nm', '600 nm', '650 nm',
-    // NIR1 (AS72652)
-    '680 nm', '730 nm', '760 nm', '810 nm', '860 nm', '900 nm',
-    // NIR2 (AS72653)
-    '940 nm', '1000 nm', '1050 nm', '1100 nm', '1150 nm', '1200 nm'
+    // UV–VIS (AS72651)
+    '410 nm', '435 nm', '460 nm', '485 nm', '510 nm', '535 nm',
+    // VIS (AS72652)
+    '560 nm', '585 nm', '610 nm', '645 nm', '680 nm', '705 nm',
+    // NIR (AS72653)
+    '730 nm', '760 nm', '810 nm', '860 nm', '900 nm', '940 nm'
 ];
 
 

@@ -225,3 +225,40 @@ def get_summary_api():
     finally:
         cursor.close()
 
+@data_bp.route('/api/classify', methods=['POST'])
+def receive_classification():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    try:
+        data = request.get_json()
+
+        plastic_type_id = data.get("plastic_type_id")
+        confidence_score = data.get("confidence_score")
+        scanned_spectra_id = data.get("scanned_spectra_id")
+
+        if not plastic_type_id or confidence_score is None:
+            return jsonify({"error": "Missing required fields"}), 400
+
+        insert_query = """
+        INSERT INTO classification_log
+        (plastic_type_id, confidence_score, scanned_spectra_id)
+        VALUES (%s, %s, %s);
+        """
+
+        cursor.execute(insert_query, (
+            plastic_type_id,
+            confidence_score,
+            scanned_spectra_id
+        ))
+
+        return jsonify({"status": "success"}), 201
+
+    except Exception as e:
+        print("Error inserting classification:", e)
+        return jsonify({"error": "Server error"}), 500
+
+    finally:
+        cursor.close()
+
+
