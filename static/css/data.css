@@ -239,8 +239,6 @@
   margin: 0 auto; /* Ensures centering if using flex */
 }
 
-/* --- SPECIFIC WIDTHS BY MODAL ID (THE FIX) --- */
-
 /* 1. Download Modal Width */
 #download-modal .modal-content {
   max-width: 800px; /* Tight fit for date pickers */
