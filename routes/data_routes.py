@@ -1,6 +1,8 @@
 # routes/data_routes.py
 
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, make_response
+import csv
+import io
 from database.db_config import get_db
 import json # Used to parse JSON data fields from MySQL
 
@@ -258,6 +260,104 @@ def receive_classification():
         print("Error inserting classification:", e)
         return jsonify({"error": "Server error"}), 500
 
+    finally:
+        cursor.close()
+
+
+@data_bp.route('/download', methods=['GET'])
+def download_logs():
+    """Returns a CSV file of classification_log entries."""
+    db = get_db()
+    if db is None:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    start = request.args.get('start')
+    end = request.args.get('end')
+    all_flag = request.args.get('all', 'false').lower() == 'true'
+
+    cursor = db.cursor(dictionary=True)
+    try:
+        # FIXED: Removed DATE_FORMAT to prevent conflict with %s parameters
+        query = """
+        SELECT
+            cl.log_id AS id,
+            cl.timestamp_utc AS timestamp,
+            pt.material_code AS material,
+            pt.chemical_name AS chemical_name,
+            cl.confidence_score AS confidence_score,
+            cl.scanned_spectra_id AS scanned_spectra_id
+        FROM classification_log cl
+        JOIN plastic_type pt ON cl.plastic_type_id = pt.id
+        """
+
+        params = ()
+        if not all_flag:
+            conditions = []
+            if start:
+                conditions.append("DATE(cl.timestamp_utc) >= %s")
+                params = params + (start,)
+            if end:
+                conditions.append("DATE(cl.timestamp_utc) <= %s")
+                params = params + (end,)
+            if conditions:
+                query += " WHERE " + " AND ".join(conditions)
+
+        query += " ORDER BY cl.timestamp_utc ASC;"
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        if not rows:
+            # This triggers your new 'No Data' modal
+            return jsonify({"error": "No data found in the selected date range"}), 404
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        writer.writerow(['id', 'timestamp', 'material', 'chemical_name', 'confidence_score', 'scanned_spectra_id'])
+
+        for r in rows:
+            # FIXED: Format the timestamp here in Python
+            # If timestamp is already a string, use it; otherwise format datetime object
+            ts_str = str(r.get('timestamp'))
+            if hasattr(r.get('timestamp'), 'strftime'):
+                ts_str = r.get('timestamp').strftime('%Y-%m-%d %H:%M:%S')
+
+            writer.writerow([
+                r.get('id'),
+                ts_str,
+                r.get('material'),
+                r.get('chemical_name'),
+                f"{round(r.get('confidence_score', 0) * 100, 1)}%", # Optional: Added nice formatting for confidence
+                r.get('scanned_spectra_id')
+            ])
+
+        csv_data = output.getvalue()
+        output.close()
+
+        # Filename logic
+        if all_flag:
+            fname_date = 'all'
+        elif start and end:
+            fname_date = f"{start}_to_{end}"
+        elif start:
+            fname_date = f"from_{start}"
+        elif end:
+            fname_date = f"to_{end}"
+        else:
+            fname_date = 'all'
+        
+        filename = f"classification_logs_{fname_date}.csv"
+
+        response = make_response(csv_data)
+        response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+        response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+        return response
+
+    except Exception as e:
+        print("Error generating CSV:", e)
+        # Pass the actual error message to the frontend for better debugging
+        return jsonify({"error": str(e)}), 500
     finally:
         cursor.close()
 

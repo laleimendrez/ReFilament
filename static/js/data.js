@@ -1,41 +1,32 @@
 let spectralChartInstance = null; // To hold the Chart.js instance
 
 // Define the 12 spectral channels (6 VIS, 6 NIR) from the AS7265X sensor
-// AS7265x spectral channels (410 nm UV to 940 nm IR, ~20 nm FWHM)
 const AS7265X_LABELS = [
-    // UV–VIS (AS72651)
     '410 nm', '435 nm', '460 nm', '485 nm', '510 nm', '535 nm',
-    // VIS (AS72652)
     '560 nm', '585 nm', '610 nm', '645 nm', '680 nm', '705 nm',
-    // NIR (AS72653)
     '730 nm', '760 nm', '810 nm', '860 nm', '900 nm', '940 nm'
 ];
 
-
-// Define the colors for the chart lines based on material type
 const MATERIAL_COLORS = {
     'PET': '#00BFFF',
     'HDPE': '#39FF14',
     'PP': '#FFD700'
 };
 
-const REFERENCE_COLOR = '#94a3b8'; // Gray for the reference line
+const REFERENCE_COLOR = '#94a3b8';
 
-// REVISED setupSpectralChart function
+// Setup Chart Function
 const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
-    // Destroy previous chart instance if it exists
     if (spectralChartInstance) {
         spectralChartInstance.destroy();
     }
     
     const ctx = document.getElementById('spectralChart').getContext('2d');
     
-    // Combine VIS and NIR data for a continuous spectrum graph
     const measuredData = [...rawVis, ...rawNir];
     const referenceData = [...refVis, ...refNir];
-    const labels = AS7265X_LABELS; // Use the 12 spectral channel labels
+    const labels = AS7265X_LABELS;
 
-    // Initialize the Chart.js instance (requires Chart.js library to be included in base.html)
     spectralChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -43,7 +34,6 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             datasets: [{
                 label: 'Measured Spectrum',
                 data: measuredData,
-                // Use MATERIAL_COLORS dictionary to set the color
                 borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF', 
                 backgroundColor: 'transparent',
                 borderWidth: 3,
@@ -53,7 +43,7 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             {
                 label: 'Reference Profile',
                 data: referenceData,
-                borderColor: REFERENCE_COLOR, // Fixed gray reference color
+                borderColor: REFERENCE_COLOR,
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 borderDash: [5, 5],
@@ -70,7 +60,6 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             },
             scales: {
                 x: {
-                    // Update label to reflect the actual channels
                     title: { display: true, text: 'WAVELENGTH (AS7265X Channels)', color: '#94a3b8' },
                     grid: { color: 'rgba(51, 65, 85, 0.5)' },
                     ticks: { color: '#E2E8F0' }
@@ -81,14 +70,16 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
                     ticks: { color: '#E2E8F0' }
                 }
             },
-
         }
     });
 };
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Donut Chart Stacking Logic (KEEPING YOUR ORIGINAL LOGIC)
+    
+    // ============================================
+    // 1. DONUT CHART LOGIC
+    // ============================================
     const types = ["pet", "hdpe", "pp"];
     const radius = 14; 
     const circumference = 2 * Math.PI * radius; 
@@ -105,23 +96,150 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // 2. Modal Logic (NEW CODE)
-    const modal = document.getElementById('spectralAnalysisModal');
-    const closeButton = document.querySelector('.close-button');
-    const confirmButton = document.querySelector('.modal-confirm-button');
+    // ============================================
+    // 2. DOWNLOAD & NO DATA MODAL LOGIC
+    // ============================================
+    const downloadModal = document.getElementById('download-modal');
+    const noDataModal = document.getElementById('no-data-modal');
+    const openDownloadModalBtn = document.getElementById('open-modal-btn');
+    
+    // Close buttons for download/no-data modals
+    const closeDownloadX = document.querySelector('#download-modal .close-modal');
+    const closeNoDataX = document.querySelector('#no-data-modal .close-no-data');
+    const closeNoDataBtn = document.getElementById('close-no-data-btn');
+    
+    // Download Action buttons
+    const downloadRangeBtn = document.getElementById('download-range-btn');
+    const downloadAllBtn = document.getElementById('download-all-btn');
+    
+    // Inputs
+    const modalStart = document.getElementById('modal-start');
+    const modalEnd = document.getElementById('modal-end');
+
+    // Helper Functions for Download Modals
+    function showModal(modal) {
+        if(modal) modal.style.display = 'flex'; 
+    }
+    function hideModal(modal) {
+        if(modal) modal.style.display = 'none';
+    }
+
+    // Event Listeners for Download Modal
+    if (openDownloadModalBtn) {
+        openDownloadModalBtn.addEventListener('click', () => showModal(downloadModal));
+    }
+    if (closeDownloadX) {
+        closeDownloadX.addEventListener('click', () => hideModal(downloadModal));
+    }
+    if (closeNoDataX) {
+        closeNoDataX.addEventListener('click', () => hideModal(noDataModal));
+    }
+    if (closeNoDataBtn) {
+        closeNoDataBtn.addEventListener('click', () => hideModal(noDataModal));
+    }
+
+    // Close Modals on Backdrop Click (Merged logic will handle specific modal checks below)
+
+    // Download Range Logic
+    if (downloadRangeBtn) {
+        downloadRangeBtn.addEventListener('click', async function(){
+            const start = modalStart.value;
+            const end = modalEnd.value;
+            
+            if (!start || !end) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/data/download?start=' + encodeURIComponent(start) + '&end=' + encodeURIComponent(end));
+                
+                if (response.status === 404) {
+                    hideModal(downloadModal); 
+                    showModal(noDataModal);   
+                    return;
+                }
+                
+                if (!response.ok) {
+                    try {
+                        const errData = await response.json();
+                        alert('Error: ' + errData.error);
+                    } catch(e) {
+                        alert('Error: ' + response.statusText);
+                    }
+                    return;
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'classification_logs.csv'; 
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                
+                hideModal(downloadModal);
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Error downloading file: ' + error.message);
+            }
+        });
+    }
+
+    // Download All Logic
+    if (downloadAllBtn) {
+        downloadAllBtn.addEventListener('click', async function(){
+            try {
+                const response = await fetch('/data/download?all=true');
+                
+                if (!response.ok) {
+                    try {
+                        const errData = await response.json();
+                        alert('Error: ' + errData.error);
+                    } catch(e) {
+                        alert('Error: ' + response.statusText);
+                    }
+                    return;
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'classification_logs_all.csv';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+                
+                hideModal(downloadModal); 
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Error downloading file: ' + error.message);
+            }
+        });
+    }
+
+
+    // ============================================
+    // 3. SPECTRAL ANALYSIS MODAL LOGIC
+    // ============================================
+    const spectralModal = document.getElementById('spectralAnalysisModal');
+    const closeSpectralBtn = document.querySelector('.close-button');
+    const confirmSpectralBtn = document.querySelector('.modal-confirm-button');
     const spectrumButtons = document.querySelectorAll('.view-spectrum');
     
-    const closeModal = () => {
-        modal.style.display = "none";
-        document.body.classList.remove('modal-open'); // <-- FIX: Remove class to restore scroll
+    const closeSpectralModal = () => {
+        spectralModal.style.display = "none";
+        document.body.classList.remove('modal-open'); 
     };
 
-    // Function to open the modal and populate data
-    // REVISED openModal function (needs to be defined as async)
-    const openModal = async (dataId) => {
-        const modal = document.getElementById('spectralAnalysisModal');
-        
-        // 1. Get the data from the table row (for display in modal header)
+    const openSpectralModal = async (dataId) => {
+        // 1. Get the data from the table row
         const row = document.querySelector(`button[data-id="${dataId}"]`).closest('tr');
         if (!row) return;
 
@@ -129,10 +247,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const confidence = row.querySelector('.confidence-text').textContent.trim();
         const timestamp = row.querySelector('td:nth-child(2)').textContent.trim();
         
-        // Use a generic analysis note, since the specific note logic was tied to mock data
         const modalNote = `Key spectral peaks were detected, showing a strong correlation with the ${materialType} reference profile. This high certainty confirms the material type.`;
 
-        // 2. FETCH SPECTRA DATA FROM API (The crucial integration step)
+        // 2. FETCH SPECTRA DATA
         const response = await fetch(`/data/spectra/${dataId}`);
         if (!response.ok) {
             alert("Failed to fetch spectral data. Check Flask server and database connection.");
@@ -140,24 +257,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const spectra = await response.json();
         
-        // Check if the data structure is correct and contains the required arrays
         if (!spectra.raw_vis || !spectra.ref_vis) {
             alert("Invalid spectral data received from server.");
             return;
         }
 
-        // 3. Populate Modal Data Bar
+        // 3. Populate Modal
         document.getElementById('modal-id').textContent = dataId;
         document.getElementById('modal-material').textContent = materialType;
         document.getElementById('modal-material').className = `material-tag ${materialType.toLowerCase()}`;
         document.getElementById('modal-confidence').textContent = confidence;
         document.getElementById('modal-timestamp').textContent = timestamp;
-        
-        // 4. Populate Analysis Note
-        // The note is a generic string now, no more mockSpectralData lookup
         document.getElementById('modal-analysis-note').textContent = modalNote;
         
-        // 5. Setup the Chart using the FETCHED DATA (raw_vis, raw_nir, etc.)
+        // 4. Setup Chart
         setupSpectralChart(
             materialType, 
             spectra.raw_vis, 
@@ -166,50 +279,57 @@ document.addEventListener("DOMContentLoaded", () => {
             spectra.ref_nir
         );
         
-        // 6. Display the modal
-        modal.style.display = "block";
+        // 5. Display modal
+        spectralModal.style.display = "block";
         document.body.classList.add('modal-open');
 
-        // Update legend color based on material type
         const legendMeasured = document.querySelector(".legend-color.measured");
         legendMeasured.style.backgroundColor = MATERIAL_COLORS[materialType] || "#FFFFFF";
     };
 
-    // Event listeners for opening the modal
+    // Attach listeners to "View Spectrum" buttons
     spectrumButtons.forEach(button => {
         button.addEventListener('click', () => {
             const dataId = button.dataset.id;
-            openModal(dataId);
+            openSpectralModal(dataId);
         });
     });
 
-    // Event listeners for closing the modal
-    closeButton.onclick = closeModal;
-    confirmButton.onclick = closeModal;
+    closeSpectralBtn.onclick = closeSpectralModal;
+    confirmSpectralBtn.onclick = closeSpectralModal;
 
-    // Close the modal if user clicks outside of it
+
+    // ============================================
+    // 4. GLOBAL CLICK HANDLER (For all modals)
+    // ============================================
     window.onclick = function(event) {
-        if (event.target == modal) {
-            closeModal();
+        // Close Spectral Modal
+        if (event.target == spectralModal) {
+            closeSpectralModal();
+        }
+        // Close Download Modal
+        if (event.target == downloadModal) {
+            hideModal(downloadModal);
+        }
+        // Close No Data Modal
+        if (event.target == noDataModal) {
+            hideModal(noDataModal);
         }
     }
 
-    // ---- AUTO REFRESH TABLE EVERY 3 SECONDS ----
+    // ============================================
+    // 5. AUTO REFRESH LOGIC (Table & Summary)
+    // ============================================
+    
+    // Refresh Table
     setInterval(async () => {
-
-        // 1. Fetch latest materials from the backend
         const response = await fetch('/data/api/logs');
         if (!response.ok) return;
 
         const updatedLogs = await response.json();
-
-        // 2. Get the table body
         const tbody = document.getElementById('materials-table-body');
-
-        // 3. Clear old table rows
         tbody.innerHTML = "";
 
-        // 4. Insert updated rows
         updatedLogs.forEach(item => {
             const row = `
             <tr class="material-row ${item.material.toLowerCase()}">
@@ -234,41 +354,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
             </tr>
             `;
-
             tbody.insertAdjacentHTML('beforeend', row);
         });
 
-        // 5. RE-ATTACH the modal buttons
+        // Re-attach listeners for new buttons
         document.querySelectorAll('.view-spectrum').forEach(btn => {
-            btn.addEventListener('click', () => openModal(btn.dataset.id));
+            btn.addEventListener('click', () => openSpectralModal(btn.dataset.id));
         });
 
-    }, 3000);  // refresh every 3 seconds
+    }, 3000); 
 
+    // Refresh Summary
     async function refreshSummary() {
         try {
             const response = await fetch('/data/summary');
             const summary = await response.json();
 
-            // Update TOTAL RECORDS
-            document.querySelector(".card:nth-child(1) .number").textContent =
-                summary.total_records.toLocaleString();
-
-            // Update PET, HDPE, PP text %
+            // Text Updates
+            document.querySelector(".card:nth-child(1) .number").textContent = summary.total_records.toLocaleString();
             document.querySelector(".percent.pet").textContent = summary.pet + "%";
             document.querySelector(".percent.hdpe").textContent = summary.hdpe + "%";
             document.querySelector(".percent.pp").textContent = summary.pp + "%";
+            document.querySelector(".activity").textContent = "+" + summary.activity_24h + " ⬆";
+            document.querySelector(".confidence").textContent = summary.avg_confidence + "%";
 
-            // Update DONUT CHART segments dynamically
-            const circles = {
-                pet: summary.pet,
-                hdpe: summary.hdpe,
-                pp: summary.pp
-            };
-
-            const radius = 14;
-            const circumference = 2 * Math.PI * radius;
+            // Donut Chart Update
+            const circles = { pet: summary.pet, hdpe: summary.hdpe, pp: summary.pp };
             let offset = 0;
+            const circumference = 2 * Math.PI * 14;
 
             for (const type of ["pet", "hdpe", "pp"]) {
                 const circle = document.querySelector(`.circle.${type}`);
@@ -279,13 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     offset -= dash;
                 }
             }
-
-            // Update 24H activity
-            document.querySelector(".activity").textContent = "+" + summary.activity_24h + " ⬆";
-
-            // Update avg confidence
-            document.querySelector(".confidence").textContent = summary.avg_confidence + "%";
-
         } catch (error) {
             console.error("Summary refresh error:", error);
         }
@@ -294,6 +400,4 @@ document.addEventListener("DOMContentLoaded", () => {
     setInterval(() => {
         refreshSummary();
     }, 3000);
-
-
 });

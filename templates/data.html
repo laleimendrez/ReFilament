@@ -24,13 +24,9 @@
         <div class="donut-chart">
           <svg viewBox="0 0 36 36" class="circular-chart">
             <circle class="circle-bg" cx="18" cy="18" r="14" />
-
             <circle class="circle pet" data-percent="{{ summary.pet }}" cx="18" cy="18" r="14" />
-
             <circle class="circle hdpe" data-percent="{{ summary.hdpe }}" cx="18" cy="18" r="14" />
-
             <circle class="circle pp" data-percent="{{ summary.pp }}" cx="18" cy="18" r="14" />
-
           </svg>
         </div>
 
@@ -55,7 +51,72 @@
   </section>
 
   <section class="table-section">
-    <h3>MATERIAL TRACEABILITY LOG</h3>
+    <div class="log-header">
+      <h3>MATERIAL TRACEABILITY LOG</h3>
+      <button id="open-modal-btn" class="trigger-btn">
+        Download CSV
+      </button>
+    </div>
+
+    <div id="download-modal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        
+        <div class="modal-header">
+          <div class="csv-icon-wrapper">
+            <div class="file-shape">
+              <span class="file-text">CSV</span>
+            </div>
+            <div class="arrow-badge">
+              <div class="arrow-shape"></div>
+            </div>
+          </div>
+          
+          <h4>DOWNLOAD CSV FILE</h4>
+        </div>
+        
+        <p class="modal-desc">Select a date range to download filtered logs or download the entire log as a CSV file.</p>
+        
+        <div class="modal-body">
+          <div class="date-row">
+            <div class="date-group">
+              <label for="modal-start">From:</label>
+              <input type="date" id="modal-start" class="modal-input" />
+            </div>
+            
+            <div class="date-group">
+              <label for="modal-end">To:</label>
+              <input type="date" id="modal-end" class="modal-input" />
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button id="download-range-btn" class="download-button download-csv">Download Range</button>
+            <button id="download-all-btn" class="download-button download-all">Download All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="no-data-modal" class="modal-overlay">
+      <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <span class="close-modal close-no-data">&times;</span>
+        
+        
+        <div class="modal-header" style="border:none; padding-bottom: 0; justify-content: center;">
+          <h4 style="margin-bottom: 10px; color: #ff6b6b; font-size: 1.4rem;">NO RECORDS FOUND</h4>
+        </div>
+        
+        <p class="modal-desc" style="margin-bottom: 25px;">
+          There are no logs recorded for the selected date range. Please try a different selection.
+        </p>
+        
+        <button id="close-no-data-btn" class="download-button" style="background-color: #4a5568; color: #fff; width: 100%; border:none;">
+          CLOSE
+        </button>
+      </div>
+    </div>
+
     <div class="table-wrapper">
       <table>
         <thead>
@@ -111,7 +172,7 @@
             <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
             <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
             <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
-            </div>
+        </div>
 
         <div class="chart-area">
             <canvas id="spectralChart"></canvas>
