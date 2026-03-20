@@ -2,45 +2,80 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mixture.css') }}">
 
-<div class="mixture-controls">
-  <label for="sort-filter">Sort / Filter:</label>
-  <select id="sort-filter">
-    <option value="default">-- Select Option --</option>
-    <option value="name-asc">Name: A → Z</option>
-    <option value="name-desc">Name: Z → A</option>
-    <option value="purpose-standard">Standard Prototyping</option>
-    <option value="purpose-lowstress">Low-Stress Components</option>
-    <option value="purpose-functional">Functional Parts</option>
-  </select>
+<div class="mixture-header">
+  <h1 class="mixture-title">FILAMENT MATERIAL REFERENCE</h1>
+  <p class="mixture-subtitle">Material specifications and properties for each supported polymer type.</p>
 </div>
 
 <div class="mixture-grid">
 
   <!-- PET -->
-  <div class="mixture-card">
-    <div class="mixture-info">
-      <h3>Clear Filament</h3>
-      <p>Standard Prototyping</p>
+  <div class="mixture-card card-pet">
+    <div class="card-top accent-pet"></div>
+    <div class="card-body">
+      <span class="material-badge badge-pet">PET</span>
+      <h3>Pure PET Filament</h3>
+      <p class="chemical-name">Polyethylene Terephthalate</p>
+      <p class="card-purpose">Standard Prototyping</p>
+      <div class="property-tags">
+        <span class="tag">Transparent</span>
+        <span class="tag">Tough</span>
+        <span class="tag">Food Safe</span>
+      </div>
     </div>
-    <button class="select-btn">SELECT</button>
+    <div class="card-footer">
+      <div class="temp-info">
+        <span class="temp-label">Extrusion Temp</span>
+        <span class="temp-value temp-pet">220°C – 250°C</span>
+      </div>
+      <button class="select-btn btn-pet">SELECT</button>
+    </div>
   </div>
 
   <!-- HDPE -->
-  <div class="mixture-card">
-    <div class="mixture-info">
-      <h3>Flexible White</h3>
-      <p>Low-Stress Components</p>
+  <div class="mixture-card card-hdpe">
+    <div class="card-top accent-hdpe"></div>
+    <div class="card-body">
+      <span class="material-badge badge-hdpe">HDPE</span>
+      <h3>Pure HDPE Filament</h3>
+      <p class="chemical-name">High-Density Polyethylene</p>
+      <p class="card-purpose">Low-Stress Components</p>
+      <div class="property-tags">
+        <span class="tag">Rigid</span>
+        <span class="tag">Chemical Inert</span>
+        <span class="tag">Lightweight</span>
+      </div>
     </div>
-    <button class="select-btn">SELECT</button>
+    <div class="card-footer">
+      <div class="temp-info">
+        <span class="temp-label">Extrusion Temp</span>
+        <span class="temp-value temp-hdpe">180°C – 230°C</span>
+      </div>
+      <button class="select-btn btn-hdpe">SELECT</button>
+    </div>
   </div>
 
   <!-- PP -->
-  <div class="mixture-card">
-    <div class="mixture-info">
-      <h3>Chemical Resistant</h3>
-      <p>Functional Parts</p>
+  <div class="mixture-card card-pp">
+    <div class="card-top accent-pp"></div>
+    <div class="card-body">
+      <span class="material-badge badge-pp">PP</span>
+      <h3>Pure PP Filament</h3>
+      <p class="chemical-name">Polypropylene</p>
+      <p class="card-purpose">Functional Parts</p>
+      <div class="property-tags">
+        <span class="tag">Heat Tolerant</span>
+        <span class="tag">Flexible</span>
+        <span class="tag">Fatigue Resistant</span>
+      </div>
     </div>
-    <button class="select-btn">SELECT</button>
+    <div class="card-footer">
+      <div class="temp-info">
+        <span class="temp-label">Extrusion Temp</span>
+        <span class="temp-value temp-pp">220°C – 260°C</span>
+      </div>
+      <button class="select-btn btn-pp">SELECT</button>
+    </div>
   </div>
 
 </div>
@@ -48,87 +83,78 @@
 <!-- PET MODAL -->
 <div class="mixture-modal" id="modal-1">
   <div class="modal-content">
-    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
-
-    <div class="mixture-details">
-      <p><strong>Filament:</strong> Clear Filament</p>
-      <p><strong>Purpose:</strong> Standard Prototyping</p>
+    <h3 class="modal-title">MATERIAL DETAILS</h3>
+    <div class="modal-badge-row">
+      <span class="material-pet">PET</span>
+      <span class="modal-material-name">Polyethylene Terephthalate</span>
     </div>
-
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Pure PET Filament</p>
+      <p><strong>Purpose:</strong> Standard Prototyping</p>
+      <p><strong>Composition:</strong> 100% PET</p>
+    </div>
     <hr>
-
     <table>
-      <tr>
-        <th>Material</th><th>Percentage (%)</th><th>Mass (g)</th><th>Properties</th>
-      </tr>
-      <tr class="row-pet">
-        <td><span class="material-pet">PET</span></td>
-        <td>100%</td>
-        <td>300g</td>
-        <td>Transparent & Tough</td>
-      </tr>
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr class="row-pet"><td>Extrusion Temp</td><td>220°C – 250°C</td></tr>
+      <tr class="row-pet"><td>Density</td><td>1.38 g/cm³</td></tr>
+      <tr class="row-pet"><td>Tensile Strength</td><td>~55 MPa</td></tr>
+      <tr class="row-pet"><td>Key Properties</td><td>Transparent, Tough, Food Safe</td></tr>
     </table>
-
     <hr>
-    <button class="ok-btn">OK</button>
+    <button class="ok-btn">CLOSE</button>
   </div>
 </div>
 
 <!-- HDPE MODAL -->
 <div class="mixture-modal" id="modal-2">
   <div class="modal-content">
-    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
-
-    <div class="mixture-details">
-      <p><strong>Filament:</strong> Flexible White</p>
-      <p><strong>Purpose:</strong> Low-Stress Components</p>
+    <h3 class="modal-title">MATERIAL DETAILS</h3>
+    <div class="modal-badge-row">
+      <span class="material-hdpe">HDPE</span>
+      <span class="modal-material-name">High-Density Polyethylene</span>
     </div>
-
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Pure HDPE Filament</p>
+      <p><strong>Purpose:</strong> Low-Stress Components</p>
+      <p><strong>Composition:</strong> 100% HDPE</p>
+    </div>
     <hr>
-
     <table>
-      <tr>
-        <th>Material</th><th>Percentage (%)</th><th>Mass (g)</th><th>Properties</th>
-      </tr>
-      <tr class="row-hdpe">
-        <td><span class="material-hdpe">HDPE</span></td>
-        <td>100%</td>
-        <td>300g</td>
-        <td>Strong & Chemically Inert</td>
-      </tr>
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr class="row-hdpe"><td>Extrusion Temp</td><td>180°C – 230°C</td></tr>
+      <tr class="row-hdpe"><td>Density</td><td>0.95 g/cm³</td></tr>
+      <tr class="row-hdpe"><td>Tensile Strength</td><td>~30 MPa</td></tr>
+      <tr class="row-hdpe"><td>Key Properties</td><td>Rigid, Chemical Inert, Lightweight</td></tr>
     </table>
-
     <hr>
-    <button class="ok-btn">OK</button>
+    <button class="ok-btn">CLOSE</button>
   </div>
 </div>
 
 <!-- PP MODAL -->
 <div class="mixture-modal" id="modal-3">
   <div class="modal-content">
-    <h3 class="modal-title">MIXTURE BLEND DETAILS</h3>
-
-    <div class="mixture-details">
-      <p><strong>Filament:</strong> Chemical Resistant</p>
-      <p><strong>Purpose:</strong> Functional Parts</p>
+    <h3 class="modal-title">MATERIAL DETAILS</h3>
+    <div class="modal-badge-row">
+      <span class="material-pp">PP</span>
+      <span class="modal-material-name">Polypropylene</span>
     </div>
-
+    <div class="mixture-details">
+      <p><strong>Filament:</strong> Pure PP Filament</p>
+      <p><strong>Purpose:</strong> Functional Parts</p>
+      <p><strong>Composition:</strong> 100% PP</p>
+    </div>
     <hr>
-
     <table>
-      <tr>
-        <th>Material</th><th>Percentage (%)</th><th>Mass (g)</th><th>Properties</th>
-      </tr>
-      <tr class="row-pp">
-        <td><span class="material-pp">PP</span></td>
-        <td>100%</td>
-        <td>300g</td>
-        <td>Heat Tolerant & Flexible</td>
-      </tr>
+      <tr><th>Property</th><th>Value</th></tr>
+      <tr class="row-pp"><td>Extrusion Temp</td><td>220°C – 260°C</td></tr>
+      <tr class="row-pp"><td>Density</td><td>0.91 g/cm³</td></tr>
+      <tr class="row-pp"><td>Tensile Strength</td><td>~35 MPa</td></tr>
+      <tr class="row-pp"><td>Key Properties</td><td>Heat Tolerant, Flexible, Fatigue Resistant</td></tr>
     </table>
-
     <hr>
-    <button class="ok-btn">OK</button>
+    <button class="ok-btn">CLOSE</button>
   </div>
 </div>
 

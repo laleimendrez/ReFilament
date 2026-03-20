@@ -1,55 +1,28 @@
-const selectButtons = document.querySelectorAll(".select-btn");
-const modals = document.querySelectorAll(".mixture-modal");
-const okButtons = document.querySelectorAll(".ok-btn");
+// mixture.js
 
+const selectButtons = document.querySelectorAll(".select-btn");
+const modals        = document.querySelectorAll(".mixture-modal");
+const okButtons     = document.querySelectorAll(".ok-btn");
+
+// Open modal on SELECT click
 selectButtons.forEach((btn, index) => {
   btn.addEventListener("click", () => {
     modals[index].style.display = "flex";
   });
 });
 
+// Close modal on CLOSE click
 okButtons.forEach((ok, index) => {
   ok.addEventListener("click", () => {
     modals[index].style.display = "none";
   });
 });
 
-const selectDropdown = document.getElementById("sort-filter");
-const mixtureGrid = document.querySelector(".mixture-grid");
-const mixtureCards = Array.from(document.querySelectorAll(".mixture-card"));
-
-selectDropdown.addEventListener("change", function () {
-  const value = this.value;
-
-  mixtureCards.forEach(card => card.style.display = "flex");
-
-  if (value === "default") return;
-
-  if (value === "name-asc") {
-    mixtureCards.sort((a, b) =>
-      a.querySelector("h3").textContent.localeCompare(b.querySelector("h3").textContent)
-    );
-    mixtureCards.forEach(card => mixtureGrid.appendChild(card));
-  }
-
-  else if (value === "name-desc") {
-    mixtureCards.sort((a, b) =>
-      b.querySelector("h3").textContent.localeCompare(a.querySelector("h3").textContent)
-    );
-    mixtureCards.forEach(card => mixtureGrid.appendChild(card));
-  }
-
-  else if (value.startsWith("purpose-")) {
-    const purposeText = {
-      "purpose-standard": "Standard Prototyping",
-      "purpose-lowstress": "Low-Stress Components",
-      "purpose-functional": "Functional Parts",
-    }[value];
-
-    mixtureCards.forEach(card => {
-      const purpose = card.querySelector(".mixture-info p").textContent;
-      card.style.display = purpose === purposeText ? "flex" : "none";
-    });
-  }
+// Close modal on backdrop click
+modals.forEach((modal) => {
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+    }
+  });
 });
-
