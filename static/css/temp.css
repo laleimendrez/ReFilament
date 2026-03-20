@@ -1,29 +1,23 @@
 .dashboard-content {
-  /* This Dark Navy (#151922) is darker than your panels, creating depth */
   background-color: #13152A !important; 
-  
-  /* Optional: Remove global borders/shadows if you want a clean flat look */
   box-shadow: none !important;
   border: none !important;
 }
 
-/* Main layout container for the two panels */
 .temp-layout-container {
-  display: flex; /* Use flexbox for side-by-side layout */
-  gap: 20px; /* This is the space BETWEEN the panels */
-  align-items: flex-start; /* ADDED: Ensures columns align to the top */
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 }
 
-/* --- NEW: Left Column Wrapper --- */
 .temp-left-column {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* This spaces out the stacked panels */
-  flex-basis: 40%; /* This sets the width for the *entire* column */
-  width: 40%; /* Ensure exact width */
+  gap: 20px;
+  flex-basis: 40%;
+  width: 40%;
 }
 
-/* Make all panels in the left column take full width */
 .temp-left-column > .panel {
   width: 100%;
   padding: 20px;
@@ -31,7 +25,6 @@
   box-sizing: border-box;
 }
 
-/* General panel styling */
 .panel {
   background-color: #1e293b; 
   border-radius: 8px;
@@ -40,7 +33,6 @@
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.35); 
 }
 
-/* Panel headings */
 .panel h3 {
   font-size: 1.8rem;
   font-weight: 600;
@@ -48,20 +40,17 @@
   color: #ffffff;
 }
 
-/* --- MODIFIED: Left Container: Real-Time --- */
 .realtime-container {
   width: 100%;
   padding: 20px;
 }
 
-/* --- MODIFIED: Right Container: History --- */
 .history-container {
   flex-basis: 60%; 
   padding: 20px 20px;
-  height: auto; /* Allow container to wrap content */
+  height: auto;
 }
 
-/* ... Gauge Styling ... */
 .gauge-container {
   position: relative;
   width: 100%;
@@ -101,97 +90,78 @@
 }
 .gauge-status {
   font-size: 1.1rem;
-  color: #39ff14; /* Bright green */
+  color: #39ff14;
   font-weight: 700;
   text-align: center;
 }
 
-/* Last update text styling */
 .last-update {
   text-align: center;
   font-size: 0.9rem;
   color: #FFFFFF;
   margin-top: 12px;
-  font-weight: 400; /* lighter weight */
+  font-weight: 400;
 }
 
-/* --- 
-  START OF MODIFIED SECTION 
---- */
-
-/* --- MODIFIED: Status and Target text --- */
 .status-details {
   display: flex;
   flex-direction: column; 
   gap: 8px; 
-  padding: 12px 16px; /* Reduced padding */
+  padding: 12px 16px;
   height: auto;
-  min-height: 0; /* Ensure no minimum height */
+  min-height: 0;
 }
 
 .status-details p {
   margin: 0; 
   padding: 0;
-  line-height: 1.2; /* Tighter line height */
+  line-height: 1.2;
   font-size: 1.15rem;
   font-weight: 600;
-  color: #FFFFFF; /* Set base text color */
+  color: #FFFFFF;
 }
 
 .status-details .status-preheating {
-  color: #39ff14; /* Bright green */
+  color: #39ff14;
   font-weight: 700;
-  /* REMOVED: display: inline; */ /* (it's the default) */
-  margin-left: 8px; /* MODIFIED: slightly larger margin */
+  margin-left: 8px;
 }
 
 .status-details .target-temp {
-  /* MODIFIED: Color is green in the image, not orange */
   color: #39ff14; 
   font-weight: 700;
-  /* REMOVED: display: inline; */ /* (it's the default) */
-  margin-left: 8px; /* MODIFIED: slightly larger margin */
+  margin-left: 8px;
 }
-
-/* --- 
-  END OF MODIFIED SECTION 
---- */
-
 
 .last-warning {
   display: flex;
   flex-direction: column; 
-  gap: 8px; /* EXACT MATCH: The space between Status and Target lines */
-  padding: 12px 16px; /* Matches Status panel padding */
+  gap: 8px;
+  padding: 12px 16px;
   height: auto; 
   min-height: 0;
-  justify-content: flex-start; /* Aligns text to the top, preventing spread */
+  justify-content: flex-start;
 }
 
-/* The Label ("Last Warning:") */
 .last-warning p {
   margin: 0;
   padding: 0;
-  line-height: 1.2; /* EXACT MATCH: Same line height as Status */
+  line-height: 1.2;
   font-size: 1rem; 
   font-weight: 600;   
   color: #FFFFFF;
 }
 
-/* The Value ("None" or "Critical Alert...") */
 .last-warning span {
   display: block;
-  margin: 0; /* Removes extra spacing */
+  margin: 0;
   padding: 0;
-  line-height: 1.2; /* EXACT MATCH: Same line height as Target */
+  line-height: 1.2;
   font-size: 1rem; 
   font-weight: 700;   
-  color: #ffc107;     
-  /* margin-left: 0; */ /* Removed indentation to align perfectly with the text above */
+  color: #ffc107;
 }
 
-
-/* --- Right Panel Chart (no changes needed) --- */
 .chart-container {
   position: relative;
   width: 100%;
@@ -200,24 +170,58 @@
   overflow: hidden; 
 }
 
-/* ... Existing CSS ... */
+/* ============================================================
+   LOG HEADER — Download CSV button row (mirrors Tab 1)
+   ============================================================ */
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
-/* --- NEW: Modal Styling --- */
+.log-header h3 {
+  margin: 0;
+  flex: 1;
+}
+
+/* Download trigger button */
+.trigger-btn {
+  background-color: transparent;
+  border: 1px solid #00b4d8;
+  color: #00b4d8;
+  padding: 6px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.trigger-btn:hover {
+  background-color: rgba(0, 180, 216, 0.1);
+  box-shadow: 0 0 10px rgba(0, 180, 216, 0.2);
+}
+
+/* ============================================================
+   MODAL OVERLAYS (Warning / Critical / Download / No-Data)
+   ============================================================ */
 .modal-overlay {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Dark dimming background */
+  background-color: rgba(0, 0, 0, 0.85);
   z-index: 1000;
   justify-content: center;
   align-items: center;
 }
 
 .modal-content {
-  background-color: #151922; /* Dark Navy/Black background */
+  background-color: #151922;
   border: 1px solid #2b3444;
   border-radius: 12px;
   width: 90%;
@@ -226,11 +230,57 @@
   text-align: center;
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
   animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+}
+
+/* Download modal — wider, left-aligned content */
+#temp-download-modal .modal-content {
+  max-width: 800px;
+  text-align: left;
+  background-color: #1e2532;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* No-data modal */
+#temp-no-data-modal .modal-content {
+  max-width: 400px;
+  text-align: center;
+  background-color: #1e2532;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+
+/* Close ✕ button */
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  color: #a0aec0;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+.close-modal:hover { color: #fff; }
+
+/* ---- Modal Header ---- */
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #2d3748;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .modal-header h2 {
@@ -244,10 +294,92 @@
   vertical-align: middle;
 }
 
-.warning-icon {
-  font-size: 2rem;
-  margin-right: 10px;
-  vertical-align: middle;
+.modal-header h4 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin: 0;
+  font-size: 1.5rem;
+  color: #fff;
+  letter-spacing: 0.8px;
+}
+
+/* ---- CSV Icon (pure CSS) ---- */
+.csv-icon-wrapper {
+  position: relative;
+  width: 42px;
+  height: 52px;
+  flex-shrink: 0;
+}
+.file-shape {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #2ecc71;
+  border-radius: 6px;
+  border-top-right-radius: 15px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.file-shape::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 13px;
+  height: 13px;
+  background-color: #1e2532;
+  border-bottom: 2px solid #2ecc71;
+  border-left: 2px solid #2ecc71;
+  border-radius: 0 0 0 4px;
+}
+.file-text {
+  font-family: sans-serif;
+  font-weight: 800;
+  font-size: 11px;
+  color: #2ecc71;
+  letter-spacing: 0.5px;
+  margin-top: 5px;
+}
+.arrow-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background-color: #2ecc71;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 3px #1e2532;
+}
+.arrow-shape {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #1e2532;
+  position: relative;
+  top: 2px;
+}
+.arrow-shape::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -2px;
+  width: 4px;
+  height: 5px;
+  background-color: #1e2532;
+}
+
+/* ---- Modal Body / Desc ---- */
+.modal-desc {
+  color: #a0aec0;
+  font-size: 1rem;
+  margin-bottom: 25px;
+  line-height: 1.5;
 }
 
 .modal-body {
@@ -257,21 +389,97 @@
   padding: 20px 0;
 }
 
+/* Override: download modal body has no borders */
+#temp-download-modal .modal-body {
+  border: none;
+  margin-top: 0;
+  padding: 0;
+}
+
+/* ---- Date Row ---- */
+.date-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  align-items: center;
+}
+.date-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+.date-group label {
+  color: #a0aec0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: uppercase;
+  min-width: 45px;
+}
+.modal-input {
+  background-color: #0f1520;
+  border: 1px solid #4a5568;
+  color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  outline: none;
+  font-family: inherit;
+  color-scheme: dark;
+  width: 100%;
+  flex-grow: 1;
+}
+.modal-input:focus { border-color: #00b4d8; }
+
+/* ---- Action Buttons ---- */
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+.download-button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.download-csv {
+  background-color: #00b4d8;
+  color: #0f1520;
+}
+.download-csv:hover { background-color: #22d3ee; }
+.download-all {
+  background-color: transparent;
+  border: 1px solid #2ecc71;
+  color: #2ecc71;
+}
+.download-all:hover {
+  background-color: rgba(46, 204, 113, 0.1);
+  box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
+}
+
+/* ---- Warning / Critical modal specifics ---- */
+.warning-icon {
+  font-size: 2rem;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
 .temp-readout {
   font-size: 1.5rem;
   color: #ffffff;
   font-weight: 700;
   margin-bottom: 15px;
 }
-
 .sub-temp {
   font-size: 1.2rem;
-  color: #a0a0a0; /* Grey text for label */
+  color: #a0a0a0;
 }
-
-.danger-text {
-  color: #FF0000; /* Red text for values */
-}
+.danger-text { color: #FF0000; }
 
 .modal-message {
   color: #cccccc;
@@ -279,16 +487,12 @@
   line-height: 1.5;
   margin-bottom: 15px;
 }
-
 .modal-timestamp {
   color: #888888;
   font-size: 0.9rem;
   font-weight: 600;
 }
-
-.modal-footer {
-  margin-top: 20px;
-}
+.modal-footer { margin-top: 20px; }
 
 .close-btn {
   background-color: #2b3444;
@@ -301,14 +505,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+.close-btn:hover { background-color: #3a465a; }
 
-.close-btn:hover {
-  background-color: #3a465a;
-}
-
-/* --- Helper Classes for Text Colors (Used by JS) --- */
+/* ---- Helper colour classes (used by JS) ---- */
 .text-critical { color: #ff3f3fff !important; }
-.text-warning { color: #FFD700 !important; }
-.text-stable { color: #39FF14 !important; }
-.text-cold { color: #2196F3 !important; }
-.text-low { color: #ADD8E6 !important; }
+.text-warning  { color: #FFD700    !important; }
+.text-stable   { color: #39FF14   !important; }
+.text-cold     { color: #2196F3   !important; }
+.text-low      { color: #ADD8E6   !important; }
