@@ -38,7 +38,7 @@
 
   <!-- MAIN CONTENT -->
   <main class="
-    {% if not request.path.startswith('/data') %}
+    {% if not request.path.startswith('/data') and not request.path.startswith('/mixture') %}
       dashboard-content
     {% endif %}
   ">

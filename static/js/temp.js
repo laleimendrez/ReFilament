@@ -104,17 +104,13 @@ function updateTemperatureDisplay(temperature, backendStatus, lastUpdateString) 
 
 // --- NEW: Permanent Warning Logic ---
 function updatePersistentWarning(logs) {
-    // 1. Find the most recent log that was Warning or Critical (> 70.0)
     const lastAlertLog = logs.find(log => log.temperature > 70.0);
 
     if (lastAlertLog) {
         const warningPanelText = document.querySelector('.last-warning span');
-        
-        // Get config for that specific historical log
         const stateConfig = getTempState(lastAlertLog.temperature);
         const alertTime = new Date(lastAlertLog.timestamp).toLocaleString();
 
-        // Style it
         warningPanelText.style.display = 'flex';
         warningPanelText.style.flexDirection = 'row';
         warningPanelText.style.alignItems = 'center';
@@ -132,9 +128,7 @@ function updatePersistentWarning(logs) {
             </div>
         `;
     }
-    // If no alert found in history, it stays "None" (HTML default)
 }
-
 
 // --- Critical Modal Functions ---
 function showCriticalModal(temp, fullDateTime) {
@@ -185,7 +179,6 @@ function updateHistoryChart(logs) {
 
     if (!logs || logs.length === 0) return;
 
-    // Static Data Compatible Filter
     const latestLogTime = new Date(logs[0].timestamp).getTime();
     const thirtyMinutesAgo = latestLogTime - (30 * 60 * 1000);
     
@@ -232,7 +225,7 @@ function updateHistoryChart(logs) {
                 legend: { 
                     display: true, 
                     position: 'bottom', 
-                    align: 'end',       
+                    align: 'end',
                     labels: { color: '#e0e0e0', padding: 20 } 
                 } 
             },
@@ -259,13 +252,9 @@ async function fetchTemperatureData() {
             const latestLog = logs[0]; 
             const fullDateTime = new Date(latestLog.timestamp).toLocaleString();
             
-            // 1. Update Real-Time Visuals
             updateTemperatureDisplay(latestLog.temperature, latestLog.status, fullDateTime);
-            
-            // 2. Update Permanent Warning (Scans history)
             updatePersistentWarning(logs);
 
-            // 3. Update Chart (Every 60s)
             const currentTime = Date.now();
             if (currentTime - lastChartUpdateTime > CHART_UPDATE_INTERVAL || lastChartUpdateTime === 0) {
                 updateHistoryChart(logs);
@@ -275,8 +264,121 @@ async function fetchTemperatureData() {
     } catch (error) { console.error('Fetch error:', error); }
 }
 
+// ============================================================
+// 6. CSV DOWNLOAD MODAL LOGIC (mirrors Tab 1 / data.js)
+// ============================================================
 document.addEventListener('DOMContentLoaded', function () {
+    // --- Gauge + data polling ---
     createTempGauge(25.0, '#39ff14'); 
     fetchTemperatureData();
-    setInterval(fetchTemperatureData, 3000); 
+    setInterval(fetchTemperatureData, 3000);
+
+    // --- Element references ---
+    const downloadModal  = document.getElementById('temp-download-modal');
+    const noDataModal    = document.getElementById('temp-no-data-modal');
+    const openBtn        = document.getElementById('open-temp-modal-btn');
+    const closeDownloadX = document.getElementById('close-temp-download-x');
+    const closeNoDataX   = document.querySelector('.close-temp-no-data');
+    const closeNoDataBtn = document.getElementById('close-temp-no-data-btn');
+    const rangeBtn       = document.getElementById('temp-download-range-btn');
+    const allBtn         = document.getElementById('temp-download-all-btn');
+    const startInput     = document.getElementById('temp-modal-start');
+    const endInput       = document.getElementById('temp-modal-end');
+
+    // --- Helpers ---
+    function showModal(modal)  { if (modal) modal.style.display = 'flex'; }
+    function hideModal(modal)  { if (modal) modal.style.display = 'none'; }
+
+    function triggerDownload(blob, filename) {
+        const url  = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href  = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    }
+
+    // --- Open / close listeners ---
+    if (openBtn)        openBtn.addEventListener('click',        () => showModal(downloadModal));
+    if (closeDownloadX) closeDownloadX.addEventListener('click', () => hideModal(downloadModal));
+    if (closeNoDataX)   closeNoDataX.addEventListener('click',   () => hideModal(noDataModal));
+    if (closeNoDataBtn) closeNoDataBtn.addEventListener('click', () => hideModal(noDataModal));
+
+    // --- Download Range ---
+    if (rangeBtn) {
+        rangeBtn.addEventListener('click', async () => {
+            const start = startInput.value;
+            const end   = endInput.value;
+
+            if (!start || !end) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/temperature/download?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`
+                );
+
+                if (response.status === 404) {
+                    hideModal(downloadModal);
+                    showModal(noDataModal);
+                    return;
+                }
+
+                if (!response.ok) {
+                    try {
+                        const err = await response.json();
+                        alert('Error: ' + err.error);
+                    } catch {
+                        alert('Error: ' + response.statusText);
+                    }
+                    return;
+                }
+
+                const blob = await response.blob();
+                triggerDownload(blob, `temperature_logs_${start}_to_${end}.csv`);
+                hideModal(downloadModal);
+
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Error downloading file: ' + error.message);
+            }
+        });
+    }
+
+    // --- Download All ---
+    if (allBtn) {
+        allBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/temperature/download?all=true');
+
+                if (!response.ok) {
+                    try {
+                        const err = await response.json();
+                        alert('Error: ' + err.error);
+                    } catch {
+                        alert('Error: ' + response.statusText);
+                    }
+                    return;
+                }
+
+                const blob = await response.blob();
+                triggerDownload(blob, 'temperature_logs_all.csv');
+                hideModal(downloadModal);
+
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Error downloading file: ' + error.message);
+            }
+        });
+    }
+
+    // --- Close on backdrop click ---
+    window.addEventListener('click', function (event) {
+        if (event.target === downloadModal) hideModal(downloadModal);
+        if (event.target === noDataModal)   hideModal(noDataModal);
+    });
 });
