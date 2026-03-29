@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/data.css') }}">
-<script src="{{ url_for('static', filename='js/data.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <div class="dashboard">
   <h1 class="section-title">POLYMER CLASSIFICATION SUMMARY</h1>
 
+  <!-- ── SUMMARY CARDS ── -->
   <section class="summary">
-    <div class="card">
+
+    <div class="card pet-accent">
       <h2>TOTAL RECORDS</h2>
       <p class="number">{{ "{:,}".format(summary.total_records) }}</p>
       <p class="label-unit">plastics</p>
@@ -20,20 +22,14 @@
           <p class="percent pet">{{ summary.pet }}%</p>
           <p class="label">PET</p>
         </div>
-
         <div class="donut-chart">
           <svg viewBox="0 0 36 36" class="circular-chart">
             <circle class="circle-bg" cx="18" cy="18" r="14" />
-
-            <circle class="circle pet" data-percent="{{ summary.pet }}" cx="18" cy="18" r="14" />
-
+            <circle class="circle pet"  data-percent="{{ summary.pet }}"  cx="18" cy="18" r="14" />
             <circle class="circle hdpe" data-percent="{{ summary.hdpe }}" cx="18" cy="18" r="14" />
-
-            <circle class="circle pp" data-percent="{{ summary.pp }}" cx="18" cy="18" r="14" />
-
+            <circle class="circle pp"   data-percent="{{ summary.pp }}"   cx="18" cy="18" r="14" />
           </svg>
         </div>
-
         <div class="chart-text right">
           <p class="percent hdpe">{{ summary.hdpe }}%</p>
           <p class="label">HDPE</p>
@@ -43,93 +39,199 @@
       </div>
     </div>
 
-    <div class="card">
+    <div class="card hdpe-accent">
       <h2>24H ACTIVITY</h2>
       <p class="activity">+{{ summary.activity_24h }} ⬆</p>
+      <p class="label-unit">scans today</p>
     </div>
 
-    <div class="card">
+    <div class="card pp-accent">
       <h2>AVERAGE CONFIDENCE</h2>
       <p class="confidence">{{ summary.avg_confidence }}%</p>
+      <p class="label-unit">model accuracy</p>
     </div>
+
   </section>
 
+  <!-- ── TABLE SECTION ── -->
   <section class="table-section">
-    <h3>MATERIAL TRACEABILITY LOG</h3>
+
+    <!-- Header row -->
+    <div class="log-header">
+      <h3>MATERIAL TRACEABILITY LOG</h3>
+      <div class="log-header-actions">
+        <!-- ISO-Usability: export selected rows -->
+        <button id="export-selected-btn" class="trigger-btn trigger-btn--purple" disabled>
+          Export Selected
+        </button>
+        <button id="open-modal-btn" class="trigger-btn">
+          Download CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- ISO-Usability: search + filter bar -->
+    <div class="search-filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input
+          type="text"
+          id="search-input"
+          class="search-input"
+          placeholder="Search ID, timestamp, chemical name…"
+          autocomplete="off"
+        />
+        <button id="clear-search-btn" class="clear-search" title="Clear search">✕</button>
+      </div>
+      <div class="filter-chips">
+        <span class="filter-label">Filter: </span>
+        <button class="chip chip--active" data-filter="all">All</button>
+        <button class="chip chip--pet"    data-filter="PET">PET</button>
+        <button class="chip chip--hdpe"   data-filter="HDPE">HDPE</button>
+        <button class="chip chip--pp"     data-filter="PP">PP</button>
+      </div>
+      <!-- ISO-Reliability: live record count -->
+      <span id="results-count" class="results-count">-- records</span>
+    </div>
+
+    <!-- ── DOWNLOAD CSV MODAL ── -->
+    <div id="download-modal" class="modal-overlay">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-header">
+          <div class="csv-icon-wrapper">
+            <div class="file-shape"><span class="file-text">CSV</span></div>
+            <div class="arrow-badge"><div class="arrow-shape"></div></div>
+          </div>
+          <h4>DOWNLOAD CSV FILE</h4>
+        </div>
+        <p class="modal-desc">Select a date range to download filtered logs or download the entire log as a CSV file.</p>
+        <div class="modal-body">
+          <div class="date-row">
+            <div class="date-group">
+              <label for="modal-start">From:</label>
+              <input type="date" id="modal-start" class="modal-input" />
+            </div>
+            <div class="date-group">
+              <label for="modal-end">To:</label>
+              <input type="date" id="modal-end" class="modal-input" />
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="download-range-btn" class="download-button download-csv">Download Range</button>
+            <button id="download-all-btn"   class="download-button download-all">Download All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NO DATA MODAL ── -->
+    <div id="no-data-modal" class="modal-overlay">
+      <div class="modal-content" style="max-width:400px;text-align:center;">
+        <span class="close-modal close-no-data">&times;</span>
+        <div class="modal-header" style="border:none;padding-bottom:0;justify-content:center;">
+          <h4 style="margin-bottom:10px;color:#ff6b6b;font-size:1.4rem;">NO RECORDS FOUND</h4>
+        </div>
+        <p class="modal-desc" style="margin-bottom:25px;">
+          There are no logs recorded for the selected date range. Please try a different selection.
+        </p>
+        <button id="close-no-data-btn" class="download-button" style="background-color:#4a5568;color:#fff;width:100%;border:none;">
+          CLOSE
+        </button>
+      </div>
+    </div>
+
+    <!-- ── TABLE ── -->
     <div class="table-wrapper">
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Timestamp</th>
-            <th>Material</th>
-            <th>Confidence</th>
+            <!-- ISO-Usability: select-all checkbox -->
+            <th class="col-check"><input type="checkbox" id="select-all-cb" title="Select all visible rows" /></th>
+            <th class="sortable" data-col="id">ID <span class="sort-icon">↕</span></th>
+            <th class="sortable" data-col="timestamp">Timestamp <span class="sort-icon">↕</span></th>
+            <th class="sortable" data-col="material">Material <span class="sort-icon">↕</span></th>
+            <th class="sortable" data-col="confidence">Confidence <span class="sort-icon">↕</span></th>
             <th>Chemical Name</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody id="materials-table-body">
           {% for item in materials %}
-          <tr class="material-row {{ item.material | lower }}">
+          <tr class="material-row {{ item.material | lower }}" data-id="{{ item.id }}" data-material="{{ item.material }}" data-confidence="{{ item.confidence | replace('%','') }}">
+            <td class="col-check"><input type="checkbox" class="row-cb" data-id="{{ item.id }}" /></td>
             <td>{{ item.id }}</td>
             <td>{{ item.timestamp }}</td>
             <td class="material-cell">
-              <span class="material-tag {{ item.material | lower }}">
-                {{ item.material }}
-              </span>
+              <span class="material-tag {{ item.material | lower }}">{{ item.material }}</span>
             </td>
-            <td class="confidence-bar-cell"> 
-              <div class="bar-and-text-container"> 
+            <td class="confidence-bar-cell">
+              <div class="bar-and-text-container">
                 <span class="confidence-bar-wrapper">
-                  <span class="confidence-bar {{ item.material | lower }}" 
+                  <span class="confidence-bar {{ item.material | lower }}"
                     style="--conf: {{ item.confidence | replace('%', '') }}">
                   </span>
                 </span>
                 <span class="confidence-text">{{ item.confidence }}</span>
               </div>
             </td>
-            <td>
-              {{ item.chemical_name if item.chemical_name else 'N/A' }}
-            </td>
+            <td>{{ item.chemical_name if item.chemical_name else 'N/A' }}</td>
             <td>
               <button class="view-spectrum" data-id="{{ item.id }}">View Spectrum</button>
-            </td> 
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+
+    <!-- ISO-Efficiency: pagination bar -->
+    <div class="pagination-bar">
+      <span id="pagination-info" class="pagination-info">Showing 1–10 of -- records</span>
+      <div class="pagination-controls">
+        <button id="page-first" class="page-btn" title="First page">«</button>
+        <button id="page-prev"  class="page-btn" title="Previous">‹</button>
+        <span id="page-numbers" class="page-numbers"></span>
+        <button id="page-next"  class="page-btn" title="Next">›</button>
+        <button id="page-last"  class="page-btn" title="Last page">»</button>
+      </div>
+      <div class="rows-per-page">
+        <label for="rows-select">Rows:</label>
+        <select id="rows-select" class="rows-select">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+    </div>
+
   </section>
 </div>
 
+<!-- ── SPECTRAL ANALYSIS MODAL ── -->
 <div id="spectralAnalysisModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <h2 id="modal-title">SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id"></span></h2>
-
-        <div class="modal-data-bar">
-            <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
-            <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
-            <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
-            </div>
-
-        <div class="chart-area">
-            <canvas id="spectralChart"></canvas>
-            <div class="chart-legend">
-                <span class="legend-item"><span class="legend-color measured"></span> Measured Spectrum</span>
-                <span class="legend-item"><span class="legend-color reference"></span> Reference Profile</span>
-            </div>
-        </div>
-        
-        <div class="modal-notes">
-            <h4>ANALYSIS NOTES</h4>
-            <p id="modal-analysis-note">
-                Key spectral peaks were detected, showing a strong correlation with the [Material] reference profile. 
-                This high certainty confirms the material type.
-            </p>
-        </div>
-
-        <button class="modal-confirm-button">CONFIRM & CLOSE</button>
+  <div class="modal-content">
+    <span class="close-button">&times;</span>
+    <h2 id="modal-title">SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id"></span></h2>
+    <div class="modal-data-bar">
+      <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
+      <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
+      <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
     </div>
+    <div class="chart-area">
+      <canvas id="spectralChart"></canvas>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-color measured"></span> Measured Spectrum</span>
+        <span class="legend-item"><span class="legend-color reference"></span> Reference Profile</span>
+      </div>
+    </div>
+    <div class="modal-notes">
+      <h4>ANALYSIS NOTES</h4>
+      <p id="modal-analysis-note">Key spectral peaks were detected, showing a strong correlation with the reference profile.</p>
+    </div>
+    <button class="modal-confirm-button">CONFIRM &amp; CLOSE</button>
+  </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/data.js') }}"></script>
 {% endblock %}

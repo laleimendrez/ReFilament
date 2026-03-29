@@ -39,7 +39,10 @@
   </div> 
 
   <div class="history-container panel">
-    <h3>Temperature History (Last 30 Minutes)</h3>
+    <div class="log-header">
+      <h3>Temperature History (Last 30 Minutes)</h3>
+      <button id="open-temp-modal-btn" class="trigger-btn">Download CSV</button>
+    </div>
     <div class="chart-container">
       <canvas id="tempHistoryChart"></canvas>
     </div>
@@ -47,6 +50,66 @@
 
 </div> 
 
+<!-- ===== DOWNLOAD MODAL ===== -->
+<div id="temp-download-modal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-modal" id="close-temp-download-x">&times;</span>
+
+    <div class="modal-header">
+      <div class="csv-icon-wrapper">
+        <div class="file-shape">
+          <span class="file-text">CSV</span>
+        </div>
+        <div class="arrow-badge">
+          <div class="arrow-shape"></div>
+        </div>
+      </div>
+      <h4>DOWNLOAD CSV FILE</h4>
+    </div>
+
+    <p class="modal-desc">Select a date range to download filtered logs or download the entire temperature log as a CSV file.</p>
+
+    <div class="modal-body">
+      <div class="date-row">
+        <div class="date-group">
+          <label for="temp-modal-start">From:</label>
+          <input type="date" id="temp-modal-start" class="modal-input" />
+        </div>
+        <div class="date-group">
+          <label for="temp-modal-end">To:</label>
+          <input type="date" id="temp-modal-end" class="modal-input" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="temp-download-range-btn" class="download-button download-csv">Download Range</button>
+        <button id="temp-download-all-btn"   class="download-button download-all">Download All</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NO DATA MODAL ===== -->
+<div id="temp-no-data-modal" class="modal-overlay">
+  <div class="modal-content" style="max-width: 400px; text-align: center;">
+    <span class="close-modal close-temp-no-data">&times;</span>
+
+    <div class="modal-header" style="border:none; padding-bottom:0; justify-content:center;">
+      <h4 style="margin-bottom:10px; color:#ff6b6b; font-size:1.4rem;">NO RECORDS FOUND</h4>
+    </div>
+
+    <p class="modal-desc" style="margin-bottom:25px;">
+      There are no temperature logs recorded for the selected date range. Please try a different selection.
+    </p>
+
+    <button id="close-temp-no-data-btn" class="download-button"
+            style="background-color:#4a5568; color:#fff; width:100%; border:none;">
+      CLOSE
+    </button>
+  </div>
+</div>
+
+<!-- ===== WARNING MODAL ===== -->
 <div id="warningModal" class="modal-overlay">
   <div class="modal-content" style="border-color: #FFD700;">
     <div class="modal-header">
@@ -69,6 +132,7 @@
   </div>
 </div>
 
+<!-- ===== CRITICAL MODAL ===== -->
 <div id="criticalModal" class="modal-overlay">
   <div class="modal-content">
     <div class="modal-header">
