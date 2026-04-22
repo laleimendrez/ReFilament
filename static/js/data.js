@@ -98,15 +98,13 @@ function renderDonut(pet, hdpe, pp) {
 // ─────────────────────────────────────────
 // FILTER + SEARCH + SORT
 // ─────────────────────────────────────────
-function applyFilters() {
+function applyFilters(resetPage = true) {
     let result = [...allLogs];
 
-    // chip filter
     if (activeFilter !== 'all') {
         result = result.filter(r => r.material === activeFilter);
     }
 
-    // search query
     if (searchQuery) {
         const q = searchQuery.toLowerCase();
         result = result.filter(r =>
@@ -117,7 +115,6 @@ function applyFilters() {
         );
     }
 
-    // sort
     result.sort((a, b) => {
         let va = a[sortCol], vb = b[sortCol];
         if (sortCol === 'id' || sortCol === 'confidence') {
@@ -131,7 +128,9 @@ function applyFilters() {
     });
 
     filteredLogs = result;
-    currentPage  = 1;
+
+    if (resetPage) currentPage = 1;
+
     renderTable();
     renderPagination();
     updateResultsCount();
@@ -398,7 +397,7 @@ async function refreshLogs() {
                 r.confidence = `${Math.round(r.confidence_score * 1000) / 10}%`;
             }
         });
-        applyFilters();
+        applyFilters(false);
     } catch (e) { console.error('Log refresh error:', e); }
 }
 
