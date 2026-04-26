@@ -5,9 +5,6 @@ from routes.data_routes import data_bp
 from database.db_config import init_mysql
 from routes.esp32_routes import esp32_bp
 
-    # ADD THIS
-
-
 app = Flask(__name__)
 
 # Initialize MySQL connection
@@ -19,8 +16,6 @@ app.register_blueprint(temp_bp, url_prefix='/temperature')
 app.register_blueprint(mixture_bp, url_prefix='/mixture')
 app.register_blueprint(data_bp, url_prefix='/data')
 app.register_blueprint(esp32_bp, url_prefix='/esp32')    
-
-
 
 # --- FIX: Redirect the root path to the default content page (/data) ---
 @app.route('/')
