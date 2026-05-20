@@ -31,7 +31,7 @@
     <a href="{{ url_for('mixture_bp.mixture_page') }}" class="tab {% if request.path.startswith('/mixture') %}active{% endif %}">
       Material Blend
     </a>
-    <a href="{{ url_for('temp_bp.temp_page') }}" class="tab {% if request.path.startswith('/temperature') %}active{% endif %}">
+    <a href="{{ url_for('temp_bp.temp_page') }}" class="tab {% if request.path.startswith('/temperature') %}active{% endif %}" style="display: none;">
       Temperature Monitoring
     </a>
   </nav>
