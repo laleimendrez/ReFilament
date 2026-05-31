@@ -2,10 +2,15 @@
 
 let spectralChartInstance = null;
 
+// Define the 12 spectral channels (6 VIS, 6 NIR) from the AS7265X sensor
+// AS7265x spectral channels (410 nm UV to 940 nm IR, ~20 nm FWHM)
 const AS7265X_LABELS = [
-    '410 nm','435 nm','460 nm','485 nm','510 nm','535 nm',
-    '560 nm','585 nm','610 nm','645 nm','680 nm','705 nm',
-    '730 nm','760 nm','810 nm','860 nm','900 nm','940 nm'
+    // UV–VIS (AS72651)
+    '410 nm', '435 nm', '460 nm', '485 nm', '510 nm', '535 nm',
+    // VIS (AS72652)
+    '560 nm', '585 nm', '610 nm', '645 nm', '680 nm', '705 nm',
+    // NIR (AS72653)
+    '730 nm', '760 nm', '810 nm', '860 nm', '900 nm', '940 nm'
 ];
 
 const MATERIAL_COLORS = { 'PET': '#00BFFF', 'HDPE': '#39FF14', 'PP': '#FFD700' };
@@ -14,24 +19,29 @@ const REFERENCE_COLOR = '#94a3b8';
 // ─────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────
-let allLogs      = [];   // full dataset from server
-let filteredLogs = [];   // after search + chip filter
-let currentPage  = 1;
-let rowsPerPage  = 10;
-let sortCol      = 'id';
-let sortDir      = 'desc';   // 'asc' | 'desc'
-let activeFilter = 'all';    // 'all' | 'PET' | 'HDPE' | 'PP'
-let searchQuery  = '';
-let selectedIds  = new Set();
+let allLogs = []; 
+let filteredLogs = []; 
+let currentPage = 1;
+let rowsPerPage = 10;
+let sortCol = 'id';
+let sortDir = 'desc'; 
+let activeFilter = 'all'; 
+let searchQuery = '';
+let selectedIds = new Set();
 
 // ─────────────────────────────────────────
 // SPECTRAL CHART
 // ─────────────────────────────────────────
 const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
-    if (spectralChartInstance) spectralChartInstance.destroy();
+    // Destroy previous chart instance if it exists
+    if (spectralChartInstance) {
+        spectralChartInstance.destroy();
+    }
+    
     const ctx = document.getElementById('spectralChart').getContext('2d');
-    const measuredData  = [...rawVis, ...rawNir];
+    const measuredData = [...rawVis, ...rawNir];
     const referenceData = [...refVis, ...refNir];
+    const isMobile = window.innerWidth <= 768;
 
     spectralChartInstance = new Chart(ctx, {
         type: 'line',
@@ -40,20 +50,22 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             datasets: [{
                 label: 'Measured Spectrum',
                 data: measuredData,
-                borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF',
+                // Use MATERIAL_COLORS dictionary to set the color
+                borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF', 
                 backgroundColor: 'transparent',
-                borderWidth: 3,
+                borderWidth: isMobile ? 2 : 3,
                 tension: 0.4,
-                pointRadius: 5
+                pointRadius: isMobile ? 2.5 : 5,
+                pointHoverRadius: isMobile ? 4 : 7,
             },{
                 label: 'Reference Profile',
                 data: referenceData,
                 borderColor: REFERENCE_COLOR,
                 backgroundColor: 'transparent',
-                borderWidth: 2,
+                borderWidth: isMobile ? 1.5 : 2,
                 borderDash: [5,5],
                 tension: 0.4,
-                pointRadius: 0
+                pointRadius: 0,
             }]
         },
         options: {
@@ -62,20 +74,43 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             plugins: { legend: { display: false } },
             scales: {
                 x: {
-                    title: { display: true, text: 'WAVELENGTH (AS7265X Channels)', color: '#94a3b8' },
-                    grid:  { color: 'rgba(51,65,85,0.5)' },
-                    ticks: { color: '#E2E8F0' }
+                    title: {
+                        display: true,
+                        text: 'WAVELENGTH (AS7265X Channels)',
+                        color: '#94a3b8',
+                        font: { size: isMobile ? 9 : 12 }
+                    },
+                    grid: { color: 'rgba(51,65,85,0.5)' },
+                    ticks: {
+                        color: '#E2E8F0',
+                        font: { size: isMobile ? 8 : 11 },
+                        maxRotation: isMobile ? 55 : 45,
+                        autoSkip: true,
+                        maxTicksLimit: isMobile ? 10 : 18,
+                    }
                 },
                 y: {
-                    title: { display: true, text: 'INTENSITY / ABSORBANCE', color: '#94a3b8' },
-                    grid:  { color: 'rgba(51,65,85,0.5)' },
-                    ticks: { color: '#E2E8F0' }
+                    title: {
+                        display: true,
+                        text: 'INTENSITY / ABSORBANCE',
+                        color: '#94a3b8',
+                        font: { size: isMobile ? 9 : 12 }
+                    },
+                    grid: { color: 'rgba(51,65,85,0.5)' },
+                    ticks: {
+                        color: '#E2E8F0',
+                        font: { size: isMobile ? 9 : 11 },
+                        maxTicksLimit: 8,
+                        callback: function(value) {
+                            if (isMobile && value >= 1000) return (value / 1000).toFixed(0) + 'k';
+                            return value.toLocaleString();
+                        }
+                    }
                 }
             }
         }
     });
 };
-
 // ─────────────────────────────────────────
 // DONUT CHART
 // ─────────────────────────────────────────
@@ -101,7 +136,9 @@ function renderDonut(pet, hdpe, pp) {
 function applyFilters(resetPage = true) {
     let result = [...allLogs];
 
-    if (activeFilter !== 'all') {
+    if (Array.isArray(activeFilter)) {
+        result = result.filter(r => activeFilter.includes(r.material));
+    } else if (activeFilter !== 'all') {
         result = result.filter(r => r.material === activeFilter);
     }
 
@@ -109,9 +146,9 @@ function applyFilters(resetPage = true) {
         const q = searchQuery.toLowerCase();
         result = result.filter(r =>
             String(r.id).includes(q) ||
-            (r.timestamp    || '').toLowerCase().includes(q) ||
-            (r.chemical_name|| '').toLowerCase().includes(q) ||
-            (r.material     || '').toLowerCase().includes(q)
+            (r.timestamp || '').toLowerCase().includes(q) ||
+            (r.chemical_name || '').toLowerCase().includes(q) ||
+            (r.material || '').toLowerCase().includes(q)
         );
     }
 
@@ -122,13 +159,12 @@ function applyFilters(resetPage = true) {
         } else {
             va = String(va).toLowerCase(); vb = String(vb).toLowerCase();
         }
-        if (va < vb) return sortDir === 'asc' ? -1 :  1;
-        if (va > vb) return sortDir === 'asc' ?  1 : -1;
+        if (va < vb) return sortDir === 'asc' ? -1 : 1;
+        if (va > vb) return sortDir === 'asc' ? 1 : -1;
         return 0;
     });
 
     filteredLogs = result;
-
     if (resetPage) currentPage = 1;
 
     renderTable();
@@ -140,39 +176,30 @@ function applyFilters(resetPage = true) {
 // TABLE RENDER
 // ─────────────────────────────────────────
 function renderTable() {
-    const tbody  = document.getElementById('materials-table-body');
-    const start  = (currentPage - 1) * rowsPerPage;
+    const tbody = document.getElementById('materials-table-body');
+    const start = (currentPage - 1) * rowsPerPage;
     const pageRows = filteredLogs.slice(start, start + rowsPerPage);
 
     if (pageRows.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;font-size:0.95rem;">
-              No records match your search or filter.
-            </td>
-          </tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">No records found.</td></tr>`;
         updateSelectAllState();
         return;
     }
 
     tbody.innerHTML = pageRows.map(item => {
-        const conf     = item.confidence || '0%';
-        const confVal  = conf.replace('%','');
-        const mat      = (item.material || '').toLowerCase();
-        const checked  = selectedIds.has(item.id) ? 'checked' : '';
+        const conf = item.confidence || '0%';
+        const confVal = conf.replace('%','');
+        const mat = (item.material || '').toLowerCase();
+        const checked = selectedIds.has(item.id) ? 'checked' : '';
         return `
         <tr class="material-row ${mat}" data-id="${item.id}" data-material="${item.material}" data-confidence="${confVal}">
           <td class="col-check"><input type="checkbox" class="row-cb" data-id="${item.id}" ${checked} /></td>
           <td>${item.id}</td>
           <td>${item.timestamp}</td>
-          <td class="material-cell">
-            <span class="material-tag ${mat}">${item.material}</span>
-          </td>
+          <td class="material-cell"><span class="material-tag ${mat}">${item.material}</span></td>
           <td class="confidence-bar-cell">
             <div class="bar-and-text-container">
-              <span class="confidence-bar-wrapper">
-                <span class="confidence-bar ${mat}" style="--conf: ${confVal}"></span>
-              </span>
+              <span class="confidence-bar-wrapper"><span class="confidence-bar ${mat}" style="--conf: ${confVal}"></span></span>
               <span class="confidence-text">${conf}</span>
             </div>
           </td>
@@ -181,14 +208,26 @@ function renderTable() {
         </tr>`;
     }).join('');
 
-    // Re-attach row checkbox listeners
+    // Clickable Row Logic
+    tbody.querySelectorAll('.material-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Prevent if clicking checkbox or button
+            if (e.target.tagName === 'INPUT' || e.target.classList.contains('view-spectrum')) return;
+            openSpectralModal(row.dataset.id);
+        });
+    });
+
+    // Re-attach listeners for interactive elements
     tbody.querySelectorAll('.row-cb').forEach(cb => {
+        cb.addEventListener('click', (e) => e.stopPropagation()); // Stop row click
         cb.addEventListener('change', onRowCheckChange);
     });
 
-    // Re-attach spectrum buttons
     tbody.querySelectorAll('.view-spectrum').forEach(btn => {
-        btn.addEventListener('click', () => openSpectralModal(btn.dataset.id));
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Stop row click
+            openSpectralModal(btn.dataset.id);
+        });
     });
 
     updateSelectAllState();
@@ -199,44 +238,39 @@ function renderTable() {
 // PAGINATION
 // ─────────────────────────────────────────
 function renderPagination() {
-    const total      = filteredLogs.length;
+    const total = filteredLogs.length;
     const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-    const start      = total === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
-    const end        = Math.min(currentPage * rowsPerPage, total);
+    const start = total === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
+    const end = Math.min(currentPage * rowsPerPage, total);
 
-    document.getElementById('pagination-info').textContent =
-        `Showing ${start}–${end} of ${total} records`;
-
+    document.getElementById('pagination-info').textContent = `Showing ${start}–${end} of ${total} records`;
     const container = document.getElementById('page-numbers');
     container.innerHTML = '';
 
-    // Show at most 5 page buttons around current
     let pStart = Math.max(1, currentPage - 2);
-    let pEnd   = Math.min(totalPages, pStart + 4);
-    pStart     = Math.max(1, pEnd - 4);
+    let pEnd = Math.min(totalPages, pStart + 4);
+    pStart = Math.max(1, pEnd - 4);
 
     for (let i = pStart; i <= pEnd; i++) {
         const btn = document.createElement('button');
-        btn.className  = 'page-btn page-num' + (i === currentPage ? ' page-btn--active' : '');
+        btn.className = 'page-btn page-num' + (i === currentPage ? ' page-btn--active' : '');
         btn.textContent = i;
         btn.addEventListener('click', () => { currentPage = i; renderTable(); renderPagination(); });
         container.appendChild(btn);
     }
 
-    // Disable first/prev/next/last
     document.getElementById('page-first').disabled = currentPage === 1;
-    document.getElementById('page-prev').disabled  = currentPage === 1;
-    document.getElementById('page-next').disabled  = currentPage === totalPages;
-    document.getElementById('page-last').disabled  = currentPage === totalPages;
+    document.getElementById('page-prev').disabled = currentPage === 1;
+    document.getElementById('page-next').disabled = currentPage === totalPages;
+    document.getElementById('page-last').disabled = currentPage === totalPages;
 }
 
 function updateResultsCount() {
-    document.getElementById('results-count').textContent =
-        `${filteredLogs.length} record${filteredLogs.length !== 1 ? 's' : ''}`;
+    document.getElementById('results-count').textContent = `${filteredLogs.length} record${filteredLogs.length !== 1 ? 's' : ''}`;
 }
 
 // ─────────────────────────────────────────
-// CHECKBOXES & EXPORT SELECTED
+// CHECKBOXES & EXPORT
 // ─────────────────────────────────────────
 function onRowCheckChange(e) {
     const id = parseInt(e.target.dataset.id);
@@ -247,307 +281,338 @@ function onRowCheckChange(e) {
 }
 
 function updateSelectAllState() {
-    const allCbs   = document.querySelectorAll('.row-cb');
+    const allCbs = document.querySelectorAll('.row-cb');
     const checkedN = [...allCbs].filter(c => c.checked).length;
-    const cb       = document.getElementById('select-all-cb');
+    const cb = document.getElementById('select-all-cb');
     if (!cb) return;
-    cb.checked       = allCbs.length > 0 && checkedN === allCbs.length;
+    cb.checked = allCbs.length > 0 && checkedN === allCbs.length;
     cb.indeterminate = checkedN > 0 && checkedN < allCbs.length;
 }
 
 function updateExportSelectedBtn() {
-    const btn = document.getElementById('export-selected-btn');
-    if (!btn) return;
-    btn.disabled    = selectedIds.size === 0;
-    btn.textContent = selectedIds.size > 0
-        ? `Export Selected (${selectedIds.size})`
-        : 'Export Selected';
+    const label = selectedIds.size > 0 ? `Export Selected (${selectedIds.size})` : 'Export Selected';
+    const disabled = selectedIds.size === 0;
+    [
+        document.getElementById('export-selected-btn'),
+        document.getElementById('export-selected-btn-desktop')
+    ].forEach(btn => {
+        if (!btn) return;
+        btn.disabled = disabled;
+        btn.textContent = label;
+    });
 }
 
 function exportSelected() {
     if (selectedIds.size === 0) return;
     const rows = allLogs.filter(r => selectedIds.has(r.id));
-    const headers = ['id','timestamp','material','chemical_name','confidence'];
     const csvRows = [
-        headers.join(','),
-        ...rows.map(r => [
-            r.id,
-            `"${r.timestamp}"`,
-            r.material,
-            `"${r.chemical_name || ''}"`,
-            r.confidence
-        ].join(','))
+        ['id','timestamp','material','chemical_name','confidence'].join(','),
+        ...rows.map(r => [r.id, `"${r.timestamp}"`, r.material, `"${r.chemical_name || ''}"`, r.confidence].join(','))
     ];
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url  = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href  = url;
-    link.download = `classification_selected_${selectedIds.size}_records.csv`;
-    document.body.appendChild(link);
+    link.href = window.URL.createObjectURL(blob);
+    link.download = `selection_${selectedIds.size}.csv`;
     link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
 }
 
 // ─────────────────────────────────────────
 // SPECTRAL MODAL
 // ─────────────────────────────────────────
-const spectralModal   = document.getElementById('spectralAnalysisModal');
-const closeSpectralBtn = document.querySelector('.close-button');
-const confirmBtn       = document.querySelector('.modal-confirm-button');
-
-function closeSpectralModal() {
-    spectralModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-}
+const spectralModal = document.getElementById('spectralAnalysisModal');
+function closeSpectralModal() { spectralModal.style.display = 'none'; document.body.classList.remove('modal-open'); }
 
 async function openSpectralModal(dataId) {
-    const row = document.querySelector(`button[data-id="${dataId}"]`);
-    if (!row) return;
-    const tr         = row.closest('tr');
-    const materialType = tr.querySelector('.material-tag').textContent.trim();
-    const confidence = tr.querySelector('.confidence-text').textContent.trim();
-    const timestamp  = tr.querySelector('td:nth-child(3)').textContent.trim();
-
     const response = await fetch(`/data/spectra/${dataId}`);
     if (!response.ok) { alert('Failed to fetch spectral data.'); return; }
     const spectra = await response.json();
-    if (!spectra.raw_vis || !spectra.ref_vis) { alert('Invalid spectral data.'); return; }
-
+    
+    const row = document.querySelector(`tr[data-id="${dataId}"]`);
     document.getElementById('modal-id').textContent = dataId;
-    document.getElementById('modal-material').textContent  = materialType;
-    document.getElementById('modal-material').className    = `material-tag ${materialType.toLowerCase()}`;
-    document.getElementById('modal-confidence').textContent = confidence;
-    document.getElementById('modal-timestamp').textContent  = timestamp;
-    document.getElementById('modal-analysis-note').textContent =
-        `Key spectral peaks were detected, showing a strong correlation with the ${materialType} reference profile. This high certainty confirms the material type.`;
 
-    setupSpectralChart(materialType, spectra.raw_vis, spectra.raw_nir, spectra.ref_vis, spectra.ref_nir);
-    spectralModal.style.display = 'block';
+    // Mobile title styling: split into two lines via JS only
+    const titleEl = document.getElementById('modal-title');
+    if (window.innerWidth <= 768) {
+        titleEl.innerHTML = 'SPECTRAL ANALYSIS';
+        // Insert classification ID line if not already there
+        let idLine = document.getElementById('modal-id-line');
+        if (!idLine) {
+            idLine = document.createElement('span');
+            idLine.id = 'modal-id-line';
+            titleEl.insertAdjacentElement('afterend', idLine);
+        }
+        idLine.textContent = `Classification ID: ${dataId}`;
+    } else {
+        titleEl.innerHTML = `SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id">${dataId}</span>`;
+        const idLine = document.getElementById('modal-id-line');
+        if (idLine) idLine.remove();
+    }
+    document.getElementById('modal-material').textContent = row.dataset.material;
+    document.getElementById('modal-material').className = `material-tag ${row.dataset.material.toLowerCase()}`;
+    document.getElementById('modal-confidence').textContent = row.querySelector('.confidence-text').textContent;
+    document.getElementById('modal-timestamp').textContent = row.querySelector('td:nth-child(3)').textContent;
+
+    setupSpectralChart(row.dataset.material, spectra.raw_vis, spectra.raw_nir, spectra.ref_vis, spectra.ref_nir);
+    spectralModal.style.display = 'flex';  // <-- changed from 'block' to 'flex'
     document.body.classList.add('modal-open');
-
-    const legendMeasured = document.querySelector('.legend-color.measured');
-    if (legendMeasured) legendMeasured.style.backgroundColor = MATERIAL_COLORS[materialType] || '#FFFFFF';
 }
 
 // ─────────────────────────────────────────
 // DOWNLOAD CSV MODALS
 // ─────────────────────────────────────────
-function showModal(modal)  { if (modal) modal.style.display = 'flex'; }
-function hideModal(modal)  { if (modal) modal.style.display = 'none'; }
+function showModal(modal) { if (modal) modal.style.display = 'flex'; }
+function hideModal(modal) { if (modal) modal.style.display = 'none'; }
 
 async function handleDownload(url, filename) {
     try {
         const response = await fetch(url);
-        if (response.status === 404) {
+        if (!response.ok) {
             hideModal(document.getElementById('download-modal'));
             showModal(document.getElementById('no-data-modal'));
             return;
         }
-        if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            alert('Error: ' + (err.error || response.statusText));
-            return;
-        }
         const blob = await response.blob();
         const link = document.createElement('a');
-        link.href  = window.URL.createObjectURL(blob);
+        link.href = window.URL.createObjectURL(blob);
         link.download = filename;
-        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(link.href);
         hideModal(document.getElementById('download-modal'));
     } catch (err) {
-        console.error(err);
         alert('Download error: ' + err.message);
     }
 }
 
 // ─────────────────────────────────────────
-// SUMMARY REFRESH
+// REFRESH & INIT
 // ─────────────────────────────────────────
 async function refreshSummary() {
     try {
-        const res     = await fetch('/data/summary');
+        const res = await fetch('/data/summary');
         const summary = await res.json();
-
         document.querySelector('.card:nth-child(1) .number').textContent = summary.total_records.toLocaleString();
-        document.querySelector('.percent.pet').textContent  = summary.pet  + '%';
+        document.querySelector('.percent.pet').textContent = summary.pet + '%';
         document.querySelector('.percent.hdpe').textContent = summary.hdpe + '%';
-        document.querySelector('.percent.pp').textContent   = summary.pp   + '%';
-        document.querySelector('.activity').textContent     = '+' + summary.activity_24h + ' ⬆';
-        document.querySelector('.confidence').textContent   = summary.avg_confidence + '%';
-
+        document.querySelector('.percent.pp').textContent = summary.pp + '%';
+        document.querySelector('.activity').textContent = '+' + summary.activity_24h + ' ⬆';
+        document.querySelector('.confidence').textContent = summary.avg_confidence + '%';
         renderDonut(summary.pet, summary.hdpe, summary.pp);
-    } catch (e) { console.error('Summary refresh error:', e); }
+    } catch (e) {}
 }
 
-// ─────────────────────────────────────────
-// LOGS REFRESH (ISO-Reliability: auto-refresh)
-// ─────────────────────────────────────────
 async function refreshLogs() {
     try {
         const res = await fetch('/data/api/logs');
         if (!res.ok) return;
         allLogs = await res.json();
-        // normalize confidence field
-        allLogs.forEach(r => {
-            if (!r.confidence && r.confidence_score !== undefined) {
-                r.confidence = `${Math.round(r.confidence_score * 1000) / 10}%`;
-            }
-        });
         applyFilters(false);
-    } catch (e) { console.error('Log refresh error:', e); }
+    } catch (e) {}
 }
 
-// ─────────────────────────────────────────
-// DOM READY
-// ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-
-    // ── Seed allLogs from server-rendered data ──
     const tbody = document.getElementById('materials-table-body');
     allLogs = [...tbody.querySelectorAll('tr.material-row')].map(tr => ({
-        id:           parseInt(tr.dataset.id),
-        material:     tr.dataset.material,
-        confidence:   tr.querySelector('.confidence-text')?.textContent.trim() || '0%',
-        timestamp:    tr.querySelector('td:nth-child(3)')?.textContent.trim()  || '',
-        chemical_name:tr.querySelector('td:nth-child(6)')?.textContent.trim()  || '',
+        id: parseInt(tr.dataset.id),
+        material: tr.dataset.material,
+        confidence: tr.querySelector('.confidence-text')?.textContent.trim() || '0%',
+        timestamp: tr.querySelector('td:nth-child(3)')?.textContent.trim() || '',
+        chemical_name: tr.querySelector('td:nth-child(6)')?.textContent.trim() || '',
     }));
 
-    applyFilters(); // initial render + pagination
+    applyFilters();
+    renderDonut(
+        parseFloat(document.querySelector('.percent.pet')?.textContent) || 0,
+        parseFloat(document.querySelector('.percent.hdpe')?.textContent) || 0,
+        parseFloat(document.querySelector('.percent.pp')?.textContent) || 0
+    );
 
-    // Initial donut + comp bar from server data
-    const pet  = parseFloat(document.querySelector('.percent.pet')?.textContent)  || 0;
-    const hdpe = parseFloat(document.querySelector('.percent.hdpe')?.textContent) || 0;
-    const pp   = parseFloat(document.querySelector('.percent.pp')?.textContent)   || 0;
-    renderDonut(pet, hdpe, pp);
-
-    // ── Search ──
-    const searchInput    = document.getElementById('search-input');
-    const clearSearchBtn = document.getElementById('clear-search-btn');
-
-    searchInput.addEventListener('input', () => {
-        searchQuery = searchInput.value.trim();
-        clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
-        applyFilters();
-    });
-
-    clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
+    // ── Search (desktop bar) ──────────────────────────────────────────
+    const desktopSearch = document.getElementById('search-input-desktop');
+    const desktopClear  = document.getElementById('clear-search-btn-desktop');
+    if (desktopSearch) {
+        desktopSearch.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim();
+            if (desktopClear) desktopClear.style.display = searchQuery ? 'block' : 'none';
+            applyFilters();
+        });
+    }
+    if (desktopClear) desktopClear.addEventListener('click', () => {
+        if (desktopSearch) desktopSearch.value = '';
         searchQuery = '';
-        clearSearchBtn.style.display = 'none';
+        desktopClear.style.display = 'none';
         applyFilters();
     });
 
-    // ── Filter chips ──
-    document.querySelectorAll('.chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-            document.querySelectorAll('.chip').forEach(c => {
-                c.classList.remove('chip--active');
-            });
-            chip.classList.add('chip--active');
-            activeFilter = chip.dataset.filter;
-            applyFilters();
+    // ── Filter chips (desktop) ────────────────────────────────────────
+    document.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('chip--active'));
+        chip.classList.add('chip--active');
+        activeFilter = chip.dataset.filter;
+        applyFilters();
+    }));
+
+    // ── Desktop export + download buttons ────────────────────────────
+    const exportDesktop = document.getElementById('export-selected-btn-desktop');
+    const downloadDesktop = document.getElementById('open-modal-btn-desktop');
+    if (exportDesktop) exportDesktop.addEventListener('click', exportSelected);
+    if (downloadDesktop) downloadDesktop.addEventListener('click', () => showModal(document.getElementById('download-modal')));
+
+    // ── Search (mobile) ───────────────────────────────────────────────
+    document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        const clearBtn = document.getElementById('clear-search-btn');
+        if (clearBtn) clearBtn.style.display = searchQuery ? 'block' : 'none';
+        applyFilters();
+    });
+    const clearBtn = document.getElementById('clear-search-btn');
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+        document.getElementById('search-input').value = '';
+        searchQuery = '';
+        clearBtn.style.display = 'none';
+        applyFilters();
+    });
+
+    // ── Sorting ───────────────────────────────────────────────────────
+    document.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', () => {
+        sortCol = th.dataset.col;
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        applyFilters();
+    }));
+
+    // ── Select-all checkbox ───────────────────────────────────────────
+    document.getElementById('select-all-cb').addEventListener('change', (e) => {
+        document.querySelectorAll('.row-cb').forEach(cb => {
+            cb.checked = e.target.checked;
+            const id = parseInt(cb.dataset.id);
+            if (e.target.checked) selectedIds.add(id);
+            else selectedIds.delete(id);
         });
-    });
-
-    // ── Sort ──
-    document.querySelectorAll('th.sortable').forEach(th => {
-        th.addEventListener('click', () => {
-            const col = th.dataset.col;
-            if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-            else { sortCol = col; sortDir = 'desc'; }
-
-            document.querySelectorAll('th.sortable .sort-icon').forEach(i => i.textContent = '↕');
-            th.querySelector('.sort-icon').textContent = sortDir === 'asc' ? '↑' : '↓';
-            applyFilters();
-        });
-    });
-
-    // ── Rows per page ──
-    document.getElementById('rows-select').addEventListener('change', e => {
-        rowsPerPage = parseInt(e.target.value);
-        currentPage = 1;
-        renderTable();
-        renderPagination();
-        updateResultsCount();
-    });
-
-    // ── Pagination buttons ──
-    document.getElementById('page-first').addEventListener('click', () => {
-        currentPage = 1; renderTable(); renderPagination();
-    });
-    document.getElementById('page-prev').addEventListener('click', () => {
-        if (currentPage > 1) { currentPage--; renderTable(); renderPagination(); }
-    });
-    document.getElementById('page-next').addEventListener('click', () => {
-        const total = Math.ceil(filteredLogs.length / rowsPerPage);
-        if (currentPage < total) { currentPage++; renderTable(); renderPagination(); }
-    });
-    document.getElementById('page-last').addEventListener('click', () => {
-        currentPage = Math.ceil(filteredLogs.length / rowsPerPage);
-        renderTable(); renderPagination();
-    });
-
-    // ── Select all checkbox ──
-    document.getElementById('select-all-cb').addEventListener('change', e => {
-        const start    = (currentPage - 1) * rowsPerPage;
-        const pageRows = filteredLogs.slice(start, start + rowsPerPage);
-        pageRows.forEach(r => {
-            if (e.target.checked) selectedIds.add(r.id);
-            else selectedIds.delete(r.id);
-        });
-        document.querySelectorAll('.row-cb').forEach(cb => { cb.checked = e.target.checked; });
         updateExportSelectedBtn();
     });
 
-    // ── Export Selected ──
-    document.getElementById('export-selected-btn').addEventListener('click', exportSelected);
+    // ── ⋮ Actions dropdown ────────────────────────────────────────────
+    const actionsBtn      = document.getElementById('actions-menu-btn');
+    const actionsDropdown = document.getElementById('actions-dropdown');
+    const filterMenuBtn   = document.getElementById('filter-menu-btn');
+    const filterDropdown  = document.getElementById('filter-dropdown');
 
-    // ── Download CSV modal ──
-    const downloadModal = document.getElementById('download-modal');
-    const noDataModal   = document.getElementById('no-data-modal');
+    actionsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const opening = actionsDropdown.hidden;
+        actionsDropdown.hidden = !opening;
+        // close the other dropdown
+        filterDropdown.hidden = true;
+        filterMenuBtn.classList.remove('open', 'active');
+    });
 
-    document.getElementById('open-modal-btn').addEventListener('click',   () => showModal(downloadModal));
-    document.querySelector('#download-modal .close-modal').addEventListener('click', () => hideModal(downloadModal));
-    document.querySelector('.close-no-data').addEventListener('click',    () => hideModal(noDataModal));
-    document.getElementById('close-no-data-btn').addEventListener('click',() => hideModal(noDataModal));
+    // ── Filter dropdown ───────────────────────────────────────────────
+    filterMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const opening = filterDropdown.hidden;
+        filterDropdown.hidden = !opening;
+        filterMenuBtn.classList.toggle('open', opening);
+        filterMenuBtn.classList.toggle('active', opening);
+        // close the other dropdown
+        actionsDropdown.hidden = true;
+    });
 
+    // ── Filter Apply ──────────────────────────────────────────────────
+    document.getElementById('filter-apply-btn').addEventListener('click', () => {
+        const checked = [...document.querySelectorAll('.filter-cb:checked')].map(cb => cb.value);
+        const hasAll = checked.includes('all');
+
+        // sync the "All" checkbox with the others
+        const allCb = document.querySelector('.filter-cb[value="all"]');
+        const typeCbs = [...document.querySelectorAll('.filter-cb:not([value="all"])')];
+
+        if (hasAll) {
+            // "All" checked → treat as no type filter
+            activeFilter = 'all';
+        } else if (checked.length === 0) {
+            activeFilter = 'all'; // nothing checked → show all
+        } else if (checked.length === 1) {
+            activeFilter = checked[0]; // single type
+        } else {
+            // multiple types selected — filter to any of them
+            activeFilter = checked; // applyFilters handles array below
+        }
+
+        applyFilters();
+        filterDropdown.hidden = true;
+        filterMenuBtn.classList.remove('open', 'active');
+    });
+
+    // Sync "All" checkbox: checking it checks everything, unchecking clears types
+    document.querySelector('.filter-cb[value="all"]').addEventListener('change', (e) => {
+        document.querySelectorAll('.filter-cb:not([value="all"])').forEach(cb => {
+            cb.checked = e.target.checked;
+        });
+    });
+    // If all type boxes are manually checked, also check "All"
+    document.querySelectorAll('.filter-cb:not([value="all"])').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const typeCbs = [...document.querySelectorAll('.filter-cb:not([value="all"])')];
+            document.querySelector('.filter-cb[value="all"]').checked = typeCbs.every(c => c.checked);
+        });
+    });
+
+    // ── Close dropdowns on outside click ─────────────────────────────
+    document.addEventListener('click', () => {
+        actionsDropdown.hidden = true;
+        filterDropdown.hidden  = true;
+        filterMenuBtn.classList.remove('open', 'active');
+    });
+    // Prevent clicks inside panels from closing them
+    actionsDropdown.addEventListener('click', (e) => e.stopPropagation());
+    filterDropdown.addEventListener('click',  (e) => e.stopPropagation());
+
+    // ── Export selected ───────────────────────────────────────────────
+    document.getElementById('export-selected-btn').addEventListener('click', () => {
+        exportSelected();
+        actionsDropdown.hidden = true;
+    });
+
+    // ── Download CSV modal ────────────────────────────────────────────
+    document.getElementById('open-modal-btn').addEventListener('click', () => {
+        actionsDropdown.hidden = true;
+        showModal(document.getElementById('download-modal'));
+    });
+
+    // ── Spectral modal close ──────────────────────────────────────────
+    document.querySelector('.close-button').onclick = closeSpectralModal;
+    document.querySelector('.modal-confirm-button').onclick = closeSpectralModal;
+
+    // ── Download modal close buttons ──────────────────────────────────────────
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            hideModal(document.getElementById('download-modal'));
+            hideModal(document.getElementById('no-data-modal'));
+        });
+    });
+
+    const closeNoDataBtn = document.getElementById('close-no-data-btn');
+    if (closeNoDataBtn) {
+        closeNoDataBtn.addEventListener('click', () => hideModal(document.getElementById('no-data-modal')));
+    }
+
+    // Close on overlay background click
+    document.getElementById('download-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) hideModal(e.currentTarget);
+    });
+    document.getElementById('no-data-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) hideModal(e.currentTarget);
+    });
+
+    // ── Download buttons ──────────────────────────────────────────────────────
     document.getElementById('download-range-btn').addEventListener('click', () => {
         const start = document.getElementById('modal-start').value;
         const end   = document.getElementById('modal-end').value;
-        if (!start || !end) { alert('Please select both start and end dates.'); return; }
-        handleDownload(
-            `/data/download?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
-            `classification_logs_${start}_to_${end}.csv`
-        );
+        if (!start || !end) { alert('Please select both a start and end date.'); return; }
+        handleDownload(`/data/download?start=${start}&end=${end}`, `logs_${start}_to_${end}.csv`);
     });
 
     document.getElementById('download-all-btn').addEventListener('click', () => {
-        handleDownload('/data/download?all=true', 'classification_logs_all.csv');
+        handleDownload('/data/download?all=true', 'logs_all.csv');  // <-- added ?all=true
     });
 
-    // ── Spectral modal ──
-    closeSpectralBtn.onclick  = closeSpectralModal;
-    confirmBtn.onclick        = closeSpectralModal;
-
-    // Attach spectrum buttons from server-rendered rows
-    document.querySelectorAll('.view-spectrum').forEach(btn => {
-        btn.addEventListener('click', () => openSpectralModal(btn.dataset.id));
-    });
-
-    // ── Backdrop clicks ──
-    window.addEventListener('click', e => {
-        if (e.target === spectralModal) closeSpectralModal();
-        if (e.target === downloadModal) hideModal(downloadModal);
-        if (e.target === noDataModal)   hideModal(noDataModal);
-    });
-
-    // ── Auto-refresh every 5s ──
-    setInterval(() => {
-        refreshLogs();
-        refreshSummary();
-    }, 5000);
+    setInterval(() => { refreshLogs(); refreshSummary(); }, 5000);
 });
