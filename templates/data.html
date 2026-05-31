@@ -58,30 +58,102 @@
 
     <!-- Header row -->
     <div class="log-header">
-      <h3>MATERIAL TRACEABILITY LOG</h3>
+      <h3 class="section-title">MATERIAL TRACEABILITY LOG </h3>
       <div class="log-header-actions">
-        <!-- ISO-Usability: export selected rows -->
-        <button id="export-selected-btn" class="trigger-btn trigger-btn--purple" disabled>
+
+        <!-- DESKTOP: original two buttons (hidden on tablet/mobile) -->
+        <button id="export-selected-btn-desktop" class="trigger-btn trigger-btn--purple desktop-only" disabled>
           Export Selected
         </button>
-        <button id="open-modal-btn" class="trigger-btn">
+        <button id="open-modal-btn-desktop" class="trigger-btn desktop-only">
           Download CSV
         </button>
+
+        <!-- TABLET/MOBILE: search bar + icon buttons (hidden on desktop) -->
+        <div class="search-wrap mobile-only">
+          <span class="search-icon">⌕</span>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search ID, timestamp…"
+            autocomplete="off"
+          />
+          <button id="clear-search-btn" class="clear-search" title="Clear search">✕</button>
+        </div>
+
+        <!-- ⋮ Actions dropdown -->
+        <div class="actions-menu-wrap mobile-only">
+          <button id="actions-menu-btn" class="icon-btn icon-btn--dots" title="Actions">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="3"  r="1.5" fill="currentColor"/>
+              <circle cx="8" cy="8"  r="1.5" fill="currentColor"/>
+              <circle cx="8" cy="13" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>
+          <div id="actions-dropdown" class="dropdown-panel" hidden>
+            <button id="export-selected-btn" class="dropdown-item" disabled>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Export selected
+            </button>
+            <button id="open-modal-btn" class="dropdown-item dropdown-item--highlight">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Download CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter dropdown -->
+        <div class="filter-menu-wrap mobile-only">
+          <button id="filter-menu-btn" class="icon-btn icon-btn--filter">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 2.5h12M3 7h8M5.5 11.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Filter
+            <svg class="filter-caret-svg" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div id="filter-dropdown" class="dropdown-panel filter-dropdown-panel" hidden>
+            <p class="filter-dropdown-label">FILTER BY TYPE</p>
+            <label class="filter-check-row">
+              <input type="checkbox" class="filter-cb" value="all" checked /> All
+            </label>
+            <label class="filter-check-row">
+              <input type="checkbox" class="filter-cb" value="PET" checked /> PET
+            </label>
+            <label class="filter-check-row">
+              <input type="checkbox" class="filter-cb" value="HDPE" /> HDPE
+            </label>
+            <label class="filter-check-row">
+              <input type="checkbox" class="filter-cb" value="PP" /> PP
+            </label>
+            <button id="filter-apply-btn" class="filter-apply-btn">Apply</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- ISO-Usability: search + filter bar -->
-    <div class="search-filter-bar">
+    <!-- Record count -->
+    <span id="results-count" class="results-count">-- records</span>
+
+    <!-- DESKTOP: search + filter chips bar (hidden on tablet/mobile) -->
+    <div class="search-filter-bar desktop-only">
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
         <input
           type="text"
-          id="search-input"
+          id="search-input-desktop"
           class="search-input"
           placeholder="Search ID, timestamp, chemical name…"
           autocomplete="off"
         />
-        <button id="clear-search-btn" class="clear-search" title="Clear search">✕</button>
+        <button id="clear-search-btn-desktop" class="clear-search" title="Clear search">✕</button>
       </div>
       <div class="filter-chips">
         <span class="filter-label">Filter: </span>
@@ -90,8 +162,6 @@
         <button class="chip chip--hdpe"   data-filter="HDPE">HDPE</button>
         <button class="chip chip--pp"     data-filter="PP">PP</button>
       </div>
-      <!-- ISO-Reliability: live record count -->
-      <span id="results-count" class="results-count">-- records</span>
     </div>
 
     <!-- ── DOWNLOAD CSV MODAL ── -->
@@ -149,11 +219,11 @@
             <!-- ISO-Usability: select-all checkbox -->
             <th class="col-check"><input type="checkbox" id="select-all-cb" title="Select all visible rows" /></th>
             <th class="sortable" data-col="id">ID <span class="sort-icon">↕</span></th>
-            <th class="sortable" data-col="timestamp">Timestamp <span class="sort-icon">↕</span></th>
-            <th class="sortable" data-col="material">Material <span class="sort-icon">↕</span></th>
-            <th class="sortable" data-col="confidence">Confidence <span class="sort-icon">↕</span></th>
-            <th>Chemical Name</th>
-            <th>Action</th>
+            <th class="sortable" data-col="timestamp"><span class="th-full">Timestamp</span><span class="th-short">Time</span> <span class="sort-icon">↕</span></th>
+            <th class="sortable" data-col="material"><span class="th-full">Material</span><span class="th-short">Mat.</span> <span class="sort-icon">↕</span></th>
+            <th class="sortable" data-col="confidence"><span class="th-full">Confidence</span><span class="th-short">Conf.</span> <span class="sort-icon">↕</span></th>
+            <th class="col-chemical">Chemical Name</th>
+            <th class="col-action">Action</th>
           </tr>
         </thead>
         <tbody id="materials-table-body">

@@ -291,13 +291,88 @@ hr { border: none; border-top: 1px solid #2d3748; margin: 20px 0; }
 }
 .ok-btn:hover { background: #22d3ee; }
 
-/* ── RESPONSIVE ── */
+/* ══════════════════════════════════════════
+   TABLET  (≤ 900px)
+══════════════════════════════════════════ */
 @media (max-width: 900px) {
-  .mixture-grid { grid-template-columns: 1fr; }
+  .mixture-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 1rem 1.25rem;
+  }
+
+  .mixture-header {
+    padding: 1rem 1.25rem 0.5rem;
+  }
+
+  .mixture-title { font-size: 1rem; letter-spacing: 0.5px; }
+  .mixture-subtitle { font-size: 0.85rem; }
+
+  .card-body {
+    padding: 16px 14px 12px;
+    gap: 5px;
+  }
+
+  .card-body h3 { font-size: 1.1rem; }
+
+  .material-badge { font-size: 0.78rem; padding: 3px 10px; }
+
+  .chemical-name { font-size: 0.82rem; }
+  .card-purpose  { font-size: 0.85rem; }
+
+  .property-tags { gap: 5px; margin-top: 8px; margin-bottom: 12px; }
+  .tag { font-size: 0.72rem; padding: 4px 10px; }
+
+  .card-footer { padding: 12px 14px; gap: 8px; }
+  .temp-label  { font-size: 0.7rem; letter-spacing: 0.5px; }
+  .temp-value  { font-size: 1rem; }
+
+  .select-btn  { padding: 8px 16px; font-size: 0.78rem; letter-spacing: 1px; }
 }
 
+/* ══════════════════════════════════════════
+   MOBILE  (≤ 600px)
+══════════════════════════════════════════ */
 @media (max-width: 600px) {
-  .mixture-grid { padding: 1rem; }
-  .mixture-header { padding: 1rem 1rem 0.5rem; }
-  .modal-content { width: 92%; padding: 20px; }
+  .mixture-header {
+    padding: 0.75rem 1.25rem 0.4rem;
+  }
+
+  .mixture-title { font-size: 1rem; letter-spacing: 0.5px; }
+  .mixture-subtitle { font-size: 0.82rem; }
+
+  .mixture-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 0.75rem 1.25rem;
+  }
+
+  .card-body {
+    padding: 14px 12px 10px;
+    gap: 4px;
+  }
+
+  .card-body h3 { font-size: 1rem; line-height: 1.25; }
+
+  .material-badge { font-size: 0.72rem; padding: 3px 8px; }
+
+  .chemical-name { font-size: 0.78rem; }
+  .card-purpose  { font-size: 0.78rem; }
+
+  .property-tags { gap: 4px; margin-top: 6px; margin-bottom: 10px; }
+  .tag { font-size: 0.7rem; padding: 3px 9px; }
+
+  .card-footer { padding: 10px 12px; gap: 8px; }
+  .temp-label  { font-size: 0.68rem; letter-spacing: 0.3px; }
+  .temp-value  { font-size: 0.9rem; }
+
+  .select-btn  { padding: 7px 14px; font-size: 0.75rem; letter-spacing: 0.8px; }
+
+  /* Modal */
+  .modal-content { width: 92%; padding: 16px 14px; }
+  .modal-title   { font-size: 1rem; }
+  .mixture-details p { font-size: 0.82rem; }
+  .modal-content th,
+  .modal-content td  { font-size: 0.75rem; padding: 8px 6px; }
+  .ok-btn { padding: 10px 28px; font-size: 0.85rem; }
 }
