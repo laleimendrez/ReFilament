@@ -2,10 +2,15 @@
 
 let spectralChartInstance = null;
 
+// Define the 12 spectral channels (6 VIS, 6 NIR) from the AS7265X sensor
+// AS7265x spectral channels (410 nm UV to 940 nm IR, ~20 nm FWHM)
 const AS7265X_LABELS = [
-    '410 nm','435 nm','460 nm','485 nm','510 nm','535 nm',
-    '560 nm','585 nm','610 nm','645 nm','680 nm','705 nm',
-    '730 nm','760 nm','810 nm','860 nm','900 nm','940 nm'
+    // UV–VIS (AS72651)
+    '410 nm', '435 nm', '460 nm', '485 nm', '510 nm', '535 nm',
+    // VIS (AS72652)
+    '560 nm', '585 nm', '610 nm', '645 nm', '680 nm', '705 nm',
+    // NIR (AS72653)
+    '730 nm', '760 nm', '810 nm', '860 nm', '900 nm', '940 nm'
 ];
 
 const MATERIAL_COLORS = { 'PET': '#00BFFF', 'HDPE': '#39FF14', 'PP': '#FFD700' };
@@ -28,7 +33,11 @@ let selectedIds = new Set();
 // SPECTRAL CHART
 // ─────────────────────────────────────────
 const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
-    if (spectralChartInstance) spectralChartInstance.destroy();
+    // Destroy previous chart instance if it exists
+    if (spectralChartInstance) {
+        spectralChartInstance.destroy();
+    }
+    
     const ctx = document.getElementById('spectralChart').getContext('2d');
     const measuredData = [...rawVis, ...rawNir];
     const referenceData = [...refVis, ...refNir];
@@ -41,7 +50,8 @@ const setupSpectralChart = (materialType, rawVis, rawNir, refVis, refNir) => {
             datasets: [{
                 label: 'Measured Spectrum',
                 data: measuredData,
-                borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF',
+                // Use MATERIAL_COLORS dictionary to set the color
+                borderColor: MATERIAL_COLORS[materialType] || '#FFFFFF', 
                 backgroundColor: 'transparent',
                 borderWidth: isMobile ? 2 : 3,
                 tension: 0.4,

@@ -25,9 +25,13 @@
         <div class="donut-chart">
           <svg viewBox="0 0 36 36" class="circular-chart">
             <circle class="circle-bg" cx="18" cy="18" r="14" />
-            <circle class="circle pet"  data-percent="{{ summary.pet }}"  cx="18" cy="18" r="14" />
+
+            <circle class="circle pet" data-percent="{{ summary.pet }}" cx="18" cy="18" r="14" />
+
             <circle class="circle hdpe" data-percent="{{ summary.hdpe }}" cx="18" cy="18" r="14" />
-            <circle class="circle pp"   data-percent="{{ summary.pp }}"   cx="18" cy="18" r="14" />
+
+            <circle class="circle pp" data-percent="{{ summary.pp }}" cx="18" cy="18" r="14" />
+
           </svg>
         </div>
         <div class="chart-text right">
@@ -280,27 +284,34 @@
 
 <!-- ── SPECTRAL ANALYSIS MODAL ── -->
 <div id="spectralAnalysisModal" class="modal">
-  <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <h2 id="modal-title">SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id"></span></h2>
-    <div class="modal-data-bar">
-      <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
-      <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
-      <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2 id="modal-title">SPECTRAL ANALYSIS - CLASSIFICATION ID: <span id="modal-id"></span></h2>
+
+        <div class="modal-data-bar">
+            <p><strong>MATERIAL:</strong> <span id="modal-material" class="material-tag"></span></p>
+            <p><strong>CERTAINTY:</strong> <span id="modal-confidence"></span></p>
+            <p><strong>TIMESTAMP:</strong> <span id="modal-timestamp"></span></p>
+            </div>
+
+        <div class="chart-area">
+            <canvas id="spectralChart"></canvas>
+            <div class="chart-legend">
+                <span class="legend-item"><span class="legend-color measured"></span> Measured Spectrum</span>
+                <span class="legend-item"><span class="legend-color reference"></span> Reference Profile</span>
+            </div>
+        </div>
+        
+        <div class="modal-notes">
+            <h4>ANALYSIS NOTES</h4>
+            <p id="modal-analysis-note">
+                Key spectral peaks were detected, showing a strong correlation with the [Material] reference profile. 
+                This high certainty confirms the material type.
+            </p>
+        </div>
+
+        <button class="modal-confirm-button">CONFIRM & CLOSE</button>
     </div>
-    <div class="chart-area">
-      <canvas id="spectralChart"></canvas>
-      <div class="chart-legend">
-        <span class="legend-item"><span class="legend-color measured"></span> Measured Spectrum</span>
-        <span class="legend-item"><span class="legend-color reference"></span> Reference Profile</span>
-      </div>
-    </div>
-    <div class="modal-notes">
-      <h4>ANALYSIS NOTES</h4>
-      <p id="modal-analysis-note">Key spectral peaks were detected, showing a strong correlation with the reference profile.</p>
-    </div>
-    <button class="modal-confirm-button">CONFIRM &amp; CLOSE</button>
-  </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/data.js') }}"></script>
